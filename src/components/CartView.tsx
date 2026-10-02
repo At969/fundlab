@@ -97,7 +97,8 @@ function CartRow({ item }: { item: CartItem }) {
         </button>
       </div>
 
-      <p className="w-20 text-right font-medium tabular-nums">
+      {/* Largeur libre (pas de largeur fixe) : un montant long pousse le bouton au lieu de le recouvrir. */}
+      <p className="mr-3 ml-auto min-w-24 text-right font-medium whitespace-nowrap tabular-nums">
         {formatPrice(item.priceCents * item.quantity)}
       </p>
 
