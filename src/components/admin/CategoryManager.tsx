@@ -117,7 +117,8 @@ export function CategoryManager({ categories }: { categories: AdminCategory[] })
                     maxLength={40}
                     autoComplete="off"
                     autoFocus
-                    className={inputClass}
+                    // Sur téléphone, le champ prend toute la largeur et les boutons passent dessous.
+                    className={`${inputClass} max-sm:basis-full`}
                   />
                   <button type="submit" disabled={busy === category.id} className={primaryButton}>
                     Enregistrer
