@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { IconButton } from "@/components/Icons";
 import { ProductThumb } from "@/components/ProductThumb";
 import { api, type ClientApiError } from "@/lib/client-api";
 import { formatPrice } from "@/lib/format";
@@ -123,22 +124,20 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
                     </button>
                   </td>
                   <td data-label="Actions" className="p-3 text-right whitespace-nowrap">
-                    <div>
-                      <button
-                        type="button"
+                    <div className="inline-flex items-center gap-1">
+                      <IconButton
+                        icon="pencil"
+                        tone="accent"
+                        label={`Modifier ${product.name}`}
                         onClick={() => setEditing({ mode: "edit", product })}
-                        className="font-medium text-accent-700 hover:underline"
-                      >
-                        Modifier
-                      </button>
-                      <button
-                        type="button"
+                      />
+                      <IconButton
+                        icon="trash"
+                        tone="danger"
+                        label={`Supprimer ${product.name}`}
                         disabled={busyId === product.id}
                         onClick={() => remove(product)}
-                        className="ml-4 text-stone-500 hover:text-red-600"
-                      >
-                        Supprimer
-                      </button>
+                      />
                     </div>
                   </td>
                 </tr>
@@ -275,24 +274,24 @@ function ProductForm({
                   <div className={`rounded-lg p-0.5 ${index === 0 ? "ring-2 ring-accent-500" : ""}`}>
                     <ProductThumb src={image.url} name={product?.name ?? "?"} size={88} />
                   </div>
-                  {index === 0 ? (
-                    <span className="text-xs font-medium text-accent-700">Principale</span>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => makeMain(image.key)}
-                      className="text-xs text-stone-600 hover:text-accent-700"
-                    >
-                      Mettre en premier
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => removeImage(image.key)}
-                    className="text-xs text-stone-500 hover:text-red-600"
-                  >
-                    Retirer
-                  </button>
+                  <div className="flex h-9 items-center gap-1">
+                    {index === 0 ? (
+                      <span className="px-1 text-xs font-medium text-accent-700">Principale</span>
+                    ) : (
+                      <IconButton
+                        icon="star"
+                        tone="accent"
+                        label="Définir comme image principale"
+                        onClick={() => makeMain(image.key)}
+                      />
+                    )}
+                    <IconButton
+                      icon="close"
+                      tone="danger"
+                      label="Retirer cette image"
+                      onClick={() => removeImage(image.key)}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>

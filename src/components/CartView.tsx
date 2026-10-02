@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Icon, IconButton } from "@/components/Icons";
 import { formatPrice } from "@/lib/format";
 import { selectTotalCents, useCartHydrated, useCartStore, type CartItem } from "@/store/cart";
 
@@ -33,7 +34,12 @@ export function CartView() {
             <CartRow key={item.productId} item={item} />
           ))}
         </ul>
-        <button type="button" onClick={clear} className="mt-3 text-sm text-stone-500 hover:text-red-600">
+        <button
+          type="button"
+          onClick={clear}
+          className="mt-3 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-red-600"
+        >
+          <Icon name="trash" className="h-4 w-4" />
           Vider le panier
         </button>
       </div>
@@ -95,13 +101,12 @@ function CartRow({ item }: { item: CartItem }) {
         {formatPrice(item.priceCents * item.quantity)}
       </p>
 
-      <button
-        type="button"
+      <IconButton
+        icon="trash"
+        tone="danger"
+        label={`Supprimer ${item.name} du panier`}
         onClick={() => remove(item.productId)}
-        className="text-sm text-stone-500 hover:text-red-600"
-      >
-        Supprimer
-      </button>
+      />
     </li>
   );
 }

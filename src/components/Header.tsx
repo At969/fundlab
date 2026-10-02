@@ -71,9 +71,7 @@ export async function Header() {
                 </Link>
               ))}
               {user ? (
-                <div className="px-2 py-2">
-                  <LogoutButton />
-                </div>
+                <LogoutButton showLabel />
               ) : (
                 <>
                   <Link href="/login" className={mobileLinkClass}>

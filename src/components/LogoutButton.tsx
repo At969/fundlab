@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Icon } from "@/components/Icons";
 
-export function LogoutButton() {
+// Icône seule par défaut ; `showLabel` ajoute le mot « Déconnexion » (menu mobile).
+export function LogoutButton({ showLabel = false }: { showLabel?: boolean }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
@@ -23,9 +25,14 @@ export function LogoutButton() {
       type="button"
       onClick={logout}
       disabled={pending}
-      className="text-sm text-stone-600 hover:text-stone-900 disabled:opacity-60"
+      aria-label="Déconnexion"
+      title="Déconnexion"
+      className={`inline-flex items-center gap-2 rounded-md text-stone-600 hover:bg-stone-100 hover:text-stone-900 disabled:opacity-60 ${
+        showLabel ? "px-2 py-2" : "h-9 w-9 justify-center"
+      }`}
     >
-      Déconnexion
+      <Icon name="logout" className="h-5 w-5" />
+      {showLabel && "Déconnexion"}
     </button>
   );
 }
