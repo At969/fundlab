@@ -40,7 +40,7 @@ export function CheckoutView() {
     return (
       <div className="mt-6">
         <p className="text-stone-600">Votre panier est vide.</p>
-        <Link href="/" className="mt-3 inline-block font-medium text-emerald-700 hover:underline">
+        <Link href="/products" className="mt-3 inline-block font-medium text-emerald-700 hover:underline">
           Voir les produits
         </Link>
       </div>

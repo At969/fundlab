@@ -9,6 +9,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 
 **Boutique (visiteur et client)**
 
+- Page d'accueil présentant la boutique et une sélection de produits.
 - Catalogue de produits chargé depuis la base, avec image, prix et stock.
 - Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
 - Inscription, connexion et déconnexion.
@@ -45,7 +46,8 @@ src/
 │   ├── admin/             espace d'administration
 │   ├── api/               routes API (auth, products, orders, admin/*)
 │   ├── cart/ checkout/ orders/   parcours client
-│   └── page.tsx           catalogue
+│   ├── products/          catalogue complet
+│   └── page.tsx           page d'accueil
 ├── components/            composants d'interface (admin/ pour l'administration)
 ├── lib/                   logique serveur : accès aux données, session, validation
 ├── store/cart.ts          store Zustand du panier

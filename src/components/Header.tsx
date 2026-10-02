@@ -18,6 +18,11 @@ export async function Header() {
 
         <nav className="flex items-center gap-4 text-sm">
           {/* L'administrateur n'a ni panier ni commandes : sa navigation est dans l'espace admin. */}
+          {!isAdmin && (
+            <Link href="/products" className={linkClass}>
+              Produits
+            </Link>
+          )}
           {!isAdmin && <CartLink />}
           {user && !isAdmin && (
             <Link href="/orders" className={linkClass}>
