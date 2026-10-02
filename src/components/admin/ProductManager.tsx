@@ -269,8 +269,9 @@ function ProductForm({
     <form onSubmit={onSubmit} noValidate className="mt-6 rounded-lg border border-stone-200 bg-white p-5">
       <h2 className="font-semibold">{product ? `Modifier « ${product.name} »` : "Nouveau produit"}</h2>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <fieldset className="flex flex-col gap-2 text-sm sm:col-span-2">
+      {/* min-w-0 : sans lui, un fieldset ou un champ fichier impose sa largeur minimale à la grille. */}
+      <div className="mt-4 grid gap-4 *:min-w-0 sm:grid-cols-2">
+        <fieldset className="flex min-w-0 flex-col gap-2 text-sm sm:col-span-2">
           <legend className="font-medium">
             Images ({images.length}/{MAX_PRODUCT_IMAGES})
           </legend>
@@ -312,7 +313,7 @@ function ProductForm({
               aria-label="Ajouter des images"
               accept="image/jpeg,image/png,image/webp"
               onChange={onFilesChange}
-              className="mt-1 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-stone-200"
+              className="mt-1 w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-stone-200"
             />
           )}
           <span className="text-stone-500">

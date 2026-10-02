@@ -6,8 +6,9 @@ import { CartIcon } from "@/components/CartIcon";
 import { formatPrice } from "@/lib/format";
 import { selectCount, selectTotalCents, useCartHydrated, useCartStore } from "@/store/cart";
 
-// Pages où le bouton serait redondant (on y est déjà dans le panier) ou hors sujet.
-const HIDDEN_PREFIXES = ["/cart", "/checkout", "/admin", "/login", "/register"];
+// Pages où le bouton serait redondant (panier, validation), gênant (paiement d'une commande)
+// ou hors sujet (connexion, administration).
+const HIDDEN_PREFIXES = ["/cart", "/checkout", "/orders", "/admin", "/login", "/register"];
 
 // Panier flottant, fixé en bas à droite de la boutique : il suit le visiteur pendant qu'il
 // parcourt les produits et affiche le montant dès qu'il y a un article.

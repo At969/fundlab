@@ -20,7 +20,8 @@ export default async function AdminDashboardPage() {
   const lowStock = products.filter((product) => product.is_active && product.stock < LOW_STOCK_THRESHOLD);
 
   const stats = [
-    { label: "Chiffre d'affaires encaissé", value: formatPrice(revenue) },
+    // Un montant peut être long : sur téléphone, cette carte prend toute la largeur.
+    { label: "Chiffre d'affaires encaissé", value: formatPrice(revenue), wide: true },
     { label: "Commandes", value: String(orders.length) },
     { label: "Commandes à traiter", value: String(toProcess) },
     { label: "Clients inscrits", value: String(users.filter((user) => user.role === "customer").length) },
@@ -30,9 +31,12 @@ export default async function AdminDashboardPage() {
     <div className="flex flex-col gap-10">
       <dl className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-lg border border-stone-200 bg-white p-4">
+          <div
+            key={stat.label}
+            className={`min-w-0 rounded-lg border border-stone-200 bg-white p-4 ${stat.wide ? "max-lg:col-span-2" : ""}`}
+          >
             <dt className="text-sm text-stone-500">{stat.label}</dt>
-            <dd className="mt-1 text-xl font-semibold tabular-nums sm:text-2xl">{stat.value}</dd>
+            <dd className="mt-1 text-xl font-semibold wrap-anywhere tabular-nums sm:text-2xl">{stat.value}</dd>
           </div>
         ))}
       </dl>
