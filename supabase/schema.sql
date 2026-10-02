@@ -1,5 +1,8 @@
 -- Schéma de la base (Postgres / Supabase).
 -- À exécuter une fois dans l'éditeur SQL de Supabase, puis seed.sql.
+--
+-- Montants : les colonnes *_cents contiennent le montant dans la plus petite unité de la devise.
+-- La boutique est en francs CFA (XOF), qui n'a pas de sous-unité : 1500 = 1 500 F CFA.
 
 create extension if not exists pgcrypto;
 
