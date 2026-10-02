@@ -11,7 +11,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 
 - Page d'accueil : carrousel (présentation de la boutique, puis produits à la une), sélection de produits, avantages et étapes de commande.
 - Catalogue chargé depuis la base, avec photo, prix et stock.
-- Recherche instantanée dans le catalogue, insensible aux accents et à la casse, reprise dans l'URL (`/products?q=…`).
+- Recherche instantanée dans le catalogue, insensible aux accents et à la casse, et filtre par catégorie ; les deux sont repris dans l'URL (`/products?q=…&categorie=…`).
 - Fiche détaillée par produit, avec galerie de photos.
 - Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
 - Panier flottant en bas d'écran et icône dans l'en-tête, avec le nombre d'articles et le montant.
@@ -23,7 +23,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 **Administration (compte administrateur)**
 
 - Tableau de bord : chiffre d'affaires encaissé, commandes à traiter, clients inscrits, stock faible.
-- Produits : création, modification, jusqu'à six images par produit, masquage, suppression.
+- Produits : création, modification, catégorie, jusqu'à six images par produit, masquage, suppression.
 - Commandes : liste complète avec le client et l'adresse de livraison, changement de statut.
 - Utilisateurs : liste et changement de rôle.
 

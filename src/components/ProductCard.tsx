@@ -37,6 +37,9 @@ export function ProductCard({ product }: { product: Product }) {
       </Link>
 
       <div className="flex flex-1 flex-col gap-1 p-3 sm:p-4">
+        {product.category && (
+          <p className="truncate text-xs font-medium uppercase tracking-wide text-accent-700">{product.category}</p>
+        )}
         <h2 className="line-clamp-2 text-sm font-medium sm:text-base">
           <Link href={href} className="hover:text-accent-700 hover:underline">
             {product.name}

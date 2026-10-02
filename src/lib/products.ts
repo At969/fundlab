@@ -2,7 +2,7 @@ import "server-only";
 import { db } from "@/lib/supabase";
 import type { AdminProduct, Product } from "@/lib/types";
 
-const PUBLIC_COLUMNS = "id, name, description, price_cents, image_urls, stock";
+const PUBLIC_COLUMNS = "id, name, description, category, price_cents, image_urls, stock";
 const ADMIN_COLUMNS = `${PUBLIC_COLUMNS}, is_active`;
 
 type ProductInput = Omit<AdminProduct, "id">;

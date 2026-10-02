@@ -31,6 +31,10 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
     setBusyId(null);
   }
 
+  const categories = [...new Set(products.flatMap((product) => (product.category ? [product.category] : [])))].sort(
+    (a, b) => a.localeCompare(b, "fr"),
+  );
+
   function remove(product: AdminProduct) {
     if (!window.confirm(`Supprimer définitivement « ${product.name} » ?`)) return;
     run(product.id, `/api/admin/products/${product.id}`, "DELETE");
@@ -54,6 +58,7 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
           // La clé recrée le formulaire quand on change de produit, pour repartir de ses valeurs.
           key={editing.mode === "edit" ? editing.product.id : "create"}
           product={editing.mode === "edit" ? editing.product : null}
+          categories={categories}
           onClose={() => setEditing(null)}
           onSaved={() => {
             setEditing(null);
@@ -91,6 +96,7 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
                       <div>
                         {product.name}
                         <p className="font-normal text-stone-500">
+                          {product.category && `${product.category} · `}
                           {product.image_urls.length === 0
                             ? "Aucune image"
                             : `${product.image_urls.length} image${product.image_urls.length > 1 ? "s" : ""}`}
@@ -152,10 +158,12 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
 
 function ProductForm({
   product,
+  categories,
   onClose,
   onSaved,
 }: {
   product: AdminProduct | null;
+  categories: string[];
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -242,6 +250,7 @@ function ProductForm({
     const body = {
       name: form.get("name"),
       description: form.get("description"),
+      category: form.get("category"),
       price_cents: Number(form.get("price_cents")),
       stock: Number(form.get("stock")),
       is_active: form.get("is_active") === "on",
@@ -331,6 +340,27 @@ function ProductForm({
           Description
           <textarea name="description" rows={3} defaultValue={product?.description} className={inputClass} />
           {fieldError("description")}
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm font-medium sm:col-span-2">
+          <span>
+            Catégorie <span className="font-normal text-stone-500">(facultatif)</span>
+          </span>
+          {/* Les catégories déjà utilisées sont proposées, pour éviter les doublons mal orthographiés. */}
+          <input
+            name="category"
+            list="product-categories"
+            maxLength={40}
+            autoComplete="off"
+            defaultValue={product?.category ?? ""}
+            placeholder="Choisir ou saisir une catégorie"
+            className={inputClass}
+          />
+          <datalist id="product-categories">
+            {categories.map((category) => (
+              <option key={category} value={category} />
+            ))}
+          </datalist>
+          {fieldError("category")}
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium">
           Prix (F CFA)

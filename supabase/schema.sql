@@ -22,6 +22,8 @@ create table products (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   description text not null default '',
+  -- Facultative : sert à filtrer le catalogue.
+  category text,
   price_cents integer not null check (price_cents >= 0),
   -- Liste ordonnée d'URL ; la première est l'image principale.
   image_urls text[] not null default '{}',

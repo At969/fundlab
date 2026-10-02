@@ -11,6 +11,8 @@ export type Product = {
   id: string;
   name: string;
   description: string;
+  /** Facultative : un produit sans catégorie n'apparaît que sous « Tous ». */
+  category: string | null;
   price_cents: number;
   /** Liste ordonnée ; la première image est la principale. */
   image_urls: string[];

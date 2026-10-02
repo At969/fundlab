@@ -6,12 +6,14 @@ import { listActiveProducts } from "@/lib/products";
 
 export const metadata: Metadata = { title: "Tous les produits" };
 
-type Props = { searchParams: Promise<{ q?: string | string[] }> };
+type Search = { q?: string | string[]; categorie?: string | string[] };
+type Props = { searchParams: Promise<Search> };
+
+const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value) ?? "";
 
 export default async function ProductsPage({ searchParams }: Props) {
   await redirectAdminToDashboard();
-  const [products, { q }] = await Promise.all([listActiveProducts(), searchParams]);
-  const initialQuery = (Array.isArray(q) ? q[0] : q) ?? "";
+  const [products, search] = await Promise.all([listActiveProducts(), searchParams]);
 
   return (
     <div>
@@ -22,7 +24,11 @@ export default async function ProductsPage({ searchParams }: Props) {
         <p className="mt-6 text-stone-600">Aucun produit n&apos;est disponible pour le moment.</p>
       ) : (
         <div className="animate-fade-up">
-          <ProductCatalog products={products} initialQuery={initialQuery.slice(0, 100)} />
+          <ProductCatalog
+            products={products}
+            initialQuery={first(search.q).slice(0, 100)}
+            initialCategory={first(search.categorie)}
+          />
         </div>
       )}
     </div>

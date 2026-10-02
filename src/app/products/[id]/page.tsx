@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { AddToCartButton } from "@/components/AddToCartButton";
@@ -42,7 +43,15 @@ export default async function ProductPage({ params }: Props) {
         <ProductGallery images={product.image_urls} name={product.name} />
 
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-balance">{product.name}</h1>
+          {product.category && (
+            <Link
+              href={`/products?categorie=${encodeURIComponent(product.category)}`}
+              className="text-sm font-medium uppercase tracking-wide text-accent-700 hover:underline"
+            >
+              {product.category}
+            </Link>
+          )}
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-balance">{product.name}</h1>
           <p className="mt-3 text-3xl font-semibold tabular-nums">{formatPrice(product.price_cents)}</p>
           <p className={`mt-4 inline-block rounded-full px-3 py-1 text-sm font-medium ${stockLabel.className}`}>
             {stockLabel.text}
