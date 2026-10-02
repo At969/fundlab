@@ -31,6 +31,13 @@ export async function requireAdmin(): Promise<User> {
   return user;
 }
 
+export async function parseId(params: Promise<{ id: string }>): Promise<string> {
+  const { id } = await params;
+  const result = z.uuid().safeParse(id);
+  if (!result.success) throw new ApiError(404, "NOT_FOUND", "Ressource introuvable.");
+  return result.data;
+}
+
 export async function parseBody<T extends z.ZodType>(request: Request, schema: T): Promise<z.infer<T>> {
   let json: unknown;
   try {
