@@ -1,5 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { AddToCartButton } from "@/components/AddToCartButton";
+import { HeroCarousel } from "@/components/HeroCarousel";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductThumb } from "@/components/ProductThumb";
 import { Reveal } from "@/components/Reveal";
@@ -13,6 +16,14 @@ const FEATURED_COUNT = 3;
 
 const primaryButton =
   "rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800 hover:shadow-lg active:translate-y-0";
+
+// Diapositive du bandeau ; la marge basse laisse la place aux commandes du carrousel.
+const slideClass = "grid h-full items-center gap-10 px-6 pt-12 pb-20 sm:px-12 md:grid-cols-[1.2fr_1fr] md:pt-16 md:pb-24";
+
+const heroButton =
+  "rounded-md bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-lg active:translate-y-0";
+
+const heroLink = "text-sm font-semibold text-white underline-offset-4 hover:underline";
 
 // Délai d'une animation d'entrée (lu par les classes animate-* de globals.css).
 const delay = (seconds: number) => ({ "--delay": `${seconds}s` }) as CSSProperties;
@@ -59,50 +70,92 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col gap-20">
-      <section className="grid items-center gap-10 overflow-hidden rounded-3xl bg-emerald-900 px-6 py-12 text-white sm:px-12 md:grid-cols-[1.2fr_1fr] md:py-16">
-        <div>
-          <p className="animate-fade-up text-sm font-medium uppercase tracking-widest text-emerald-300">Votre boutique en ligne</p>
-          <h1 style={delay(0.1)} className="animate-fade-up mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-            Vos produits du quotidien, commandés en quelques clics.
-          </h1>
-          <p style={delay(0.2)} className="animate-fade-up mt-5 max-w-md text-lg text-emerald-100/90">
-            Remplissez votre panier, validez votre commande et suivez-la jusqu&apos;à la livraison.
-          </p>
-          <div style={delay(0.3)} className="animate-fade-up mt-8 flex flex-wrap items-center gap-4">
-            <Link
-              href="/products"
-              className="rounded-md bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-lg active:translate-y-0"
+      <HeroCarousel>
+        <div className={slideClass}>
+          <div>
+            <p className="animate-fade-up text-sm font-medium uppercase tracking-widest text-emerald-300">
+              Votre boutique en ligne
+            </p>
+            <h1
+              style={delay(0.1)}
+              className="animate-fade-up mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
             >
-              Voir les produits
-            </Link>
-            {!user && (
-              <Link href="/register" className="text-sm font-semibold text-white underline-offset-4 hover:underline">
-                Créer un compte →
+              Vos produits du quotidien, commandés en quelques clics.
+            </h1>
+            <p style={delay(0.2)} className="animate-fade-up mt-5 max-w-md text-lg text-emerald-100/90">
+              Remplissez votre panier, validez votre commande et suivez-la jusqu&apos;à la livraison.
+            </p>
+            <div style={delay(0.3)} className="animate-fade-up mt-8 flex flex-wrap items-center gap-4">
+              <Link href="/products" className={heroButton}>
+                Voir les produits
               </Link>
-            )}
+              {!user && (
+                <Link href="/register" className={heroLink}>
+                  Créer un compte →
+                </Link>
+              )}
+            </div>
           </div>
+
+          {featured.length > 0 && (
+            <ul className="flex flex-col gap-3">
+              {featured.map((product, index) => (
+                <li
+                  key={product.id}
+                  // Léger décalage en escalier et entrée l'une après l'autre, uniquement décoratifs.
+                  style={{ marginLeft: `${index * 1.25}rem`, ...delay(0.3 + index * 0.15) }}
+                  className="animate-hero-card flex items-center gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
+                >
+                  <ProductThumb src={product.image_url} name={product.name} size={56} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{product.name}</p>
+                    <p className="text-sm text-stone-500">{product.stock > 0 ? "En stock" : "Rupture de stock"}</p>
+                  </div>
+                  <p className="font-semibold tabular-nums">{formatPrice(product.price_cents)}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
-        {featured.length > 0 && (
-          <ul className="flex flex-col gap-3">
-            {featured.map((product, index) => (
-              <li
-                key={product.id}
-                // Léger décalage en escalier et entrée l'une après l'autre, uniquement décoratifs.
-                style={{ marginLeft: `${index * 1.25}rem`, ...delay(0.3 + index * 0.15) }}
-                className="animate-hero-card flex items-center gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
-              >
-                <ProductThumb src={product.image_url} name={product.name} size={56} />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{product.name}</p>
-                  <p className="text-sm text-stone-500">{product.stock > 0 ? "En stock" : "Rupture de stock"}</p>
-                </div>
-                <p className="font-semibold tabular-nums">{formatPrice(product.price_cents)}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        {featured.map((product) => (
+          <div key={product.id} className={slideClass}>
+            <div>
+              <p className="text-sm font-medium uppercase tracking-widest text-emerald-300">À la une</p>
+              <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{product.name}</h2>
+              {product.description && (
+                <p className="mt-4 line-clamp-2 max-w-md text-lg text-emerald-100/90">{product.description}</p>
+              )}
+              <p className="mt-5 text-2xl font-semibold tabular-nums">{formatPrice(product.price_cents)}</p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <AddToCartButton product={product} className={`${heroButton} disabled:opacity-60`} />
+                <Link href="/products" className={heroLink}>
+                  Tout le catalogue →
+                </Link>
+              </div>
+            </div>
+
+            <div className="relative mx-auto aspect-[4/3] w-full max-w-sm overflow-hidden rounded-2xl bg-emerald-800 shadow-xl shadow-emerald-950/40">
+              {product.image_url ? (
+                <Image
+                  src={product.image_url}
+                  alt={product.name}
+                  fill
+                  sizes="(min-width: 768px) 384px, 100vw"
+                  className="object-cover"
+                />
+              ) : (
+                <span
+                  aria-hidden
+                  className="flex h-full items-center justify-center text-8xl font-semibold text-emerald-300/40"
+                >
+                  {product.name.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </HeroCarousel>
 
       <section aria-labelledby="featured-title">
         <div className="flex flex-wrap items-end justify-between gap-3">
