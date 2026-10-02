@@ -2,9 +2,9 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { ApiError } from "@/lib/api";
 import { db } from "@/lib/supabase";
+import { MAX_IMAGE_BYTES } from "@/lib/types";
 
 export const PRODUCT_IMAGES_BUCKET = "product-images";
-export const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 const PUBLIC_PREFIX = `${process.env.SUPABASE_URL}/storage/v1/object/public/${PRODUCT_IMAGES_BUCKET}/`;
 
@@ -28,11 +28,11 @@ export function isProductImageUrl(url: string) {
   return url.startsWith(PUBLIC_PREFIX) && !url.slice(PUBLIC_PREFIX.length).includes("/");
 }
 
-// Seule une image envoyée via /api/admin/uploads (donc hébergée dans notre bucket) est acceptée.
-export function assertOwnImage(url: string | null | undefined) {
-  if (url && !isProductImageUrl(url)) {
+// Seules des images envoyées via /api/admin/uploads (donc hébergées dans notre bucket) sont acceptées.
+export function assertOwnImages(urls: string[] | undefined) {
+  if (urls?.some((url) => !isProductImageUrl(url))) {
     const message = "Image invalide : envoyez-la depuis le formulaire.";
-    throw new ApiError(422, "VALIDATION_ERROR", message, { image_url: [message] });
+    throw new ApiError(422, "VALIDATION_ERROR", message, { image_urls: [message] });
   }
 }
 
@@ -59,8 +59,9 @@ export async function uploadProductImage(file: File): Promise<string> {
 }
 
 // Nettoyage « au mieux » : un échec ne doit pas faire échouer l'opération sur le produit.
-export async function deleteProductImage(url: string | null | undefined) {
-  if (!url || !isProductImageUrl(url)) return;
-  const { error } = await db.storage.from(PRODUCT_IMAGES_BUCKET).remove([url.slice(PUBLIC_PREFIX.length)]);
-  if (error) console.error(`Suppression de l'image impossible (${url}) : ${error.message}`);
+export async function deleteProductImages(urls: string[]) {
+  const paths = urls.filter(isProductImageUrl).map((url) => url.slice(PUBLIC_PREFIX.length));
+  if (paths.length === 0) return;
+  const { error } = await db.storage.from(PRODUCT_IMAGES_BUCKET).remove(paths);
+  if (error) console.error(`Suppression d'images impossible (${paths.join(", ")}) : ${error.message}`);
 }

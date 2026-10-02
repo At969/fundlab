@@ -2,7 +2,7 @@ import "server-only";
 import { db } from "@/lib/supabase";
 import type { AdminProduct, Product } from "@/lib/types";
 
-const PUBLIC_COLUMNS = "id, name, description, price_cents, image_url, stock";
+const PUBLIC_COLUMNS = "id, name, description, price_cents, image_urls, stock";
 const ADMIN_COLUMNS = `${PUBLIC_COLUMNS}, is_active`;
 
 type ProductInput = Omit<AdminProduct, "id">;
@@ -15,6 +15,18 @@ export async function listActiveProducts(): Promise<Product[]> {
     .order("name");
 
   if (error) throw new Error(`Lecture des produits impossible : ${error.message}`);
+  return data;
+}
+
+export async function getActiveProduct(id: string): Promise<Product | null> {
+  const { data, error } = await db
+    .from("products")
+    .select(PUBLIC_COLUMNS)
+    .eq("id", id)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error) throw new Error(`Lecture du produit impossible : ${error.message}`);
   return data;
 }
 

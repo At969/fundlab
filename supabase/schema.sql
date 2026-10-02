@@ -23,7 +23,8 @@ create table products (
   name text not null,
   description text not null default '',
   price_cents integer not null check (price_cents >= 0),
-  image_url text,
+  -- Liste ordonnée d'URL ; la première est l'image principale.
+  image_urls text[] not null default '{}',
   stock integer not null default 0 check (stock >= 0),
   is_active boolean not null default true,
   created_at timestamptz not null default now()

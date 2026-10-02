@@ -30,7 +30,7 @@ const delay = (seconds: number) => ({ "--delay": `${seconds}s` }) as CSSProperti
 
 // Mise en avant : les produits en stock d'abord, et parmi eux ceux qui ont une photo.
 function pickFeatured(products: Product[]) {
-  const score = (product: Product) => (product.stock > 0 ? 2 : 0) + (product.image_url ? 1 : 0);
+  const score = (product: Product) => (product.stock > 0 ? 2 : 0) + (product.image_urls.length > 0 ? 1 : 0);
   return [...products].sort((a, b) => score(b) - score(a)).slice(0, FEATURED_COUNT);
 }
 
@@ -106,7 +106,7 @@ export default async function HomePage() {
                   style={{ marginLeft: `${index * 1.25}rem`, ...delay(0.3 + index * 0.15) }}
                   className="animate-hero-card flex items-center gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
                 >
-                  <ProductThumb src={product.image_url} name={product.name} size={56} />
+                  <ProductThumb src={product.image_urls[0] ?? null} name={product.name} size={56} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{product.name}</p>
                     <p className="text-sm text-stone-500">{product.stock > 0 ? "En stock" : "Rupture de stock"}</p>
@@ -122,7 +122,11 @@ export default async function HomePage() {
           <div key={product.id} className={slideClass}>
             <div>
               <p className="text-sm font-medium uppercase tracking-widest text-emerald-300">À la une</p>
-              <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">{product.name}</h2>
+              <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+                <Link href={`/products/${product.id}`} className="hover:underline">
+                  {product.name}
+                </Link>
+              </h2>
               {product.description && (
                 <p className="mt-4 line-clamp-2 max-w-md text-lg text-emerald-100/90">{product.description}</p>
               )}
@@ -136,9 +140,9 @@ export default async function HomePage() {
             </div>
 
             <div className="relative mx-auto aspect-[4/3] w-full max-w-sm overflow-hidden rounded-2xl bg-emerald-800 shadow-xl shadow-emerald-950/40">
-              {product.image_url ? (
+              {product.image_urls[0] ? (
                 <Image
-                  src={product.image_url}
+                  src={product.image_urls[0]}
                   alt={product.name}
                   fill
                   sizes="(min-width: 768px) 384px, 100vw"

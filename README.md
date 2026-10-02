@@ -11,6 +11,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 
 - Page d'accueil présentant la boutique et une sélection de produits.
 - Catalogue de produits chargé depuis la base, avec image, prix et stock.
+- Fiche détaillée par produit, avec galerie de photos.
 - Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
 - Inscription, connexion et déconnexion.
 - Validation de commande, puis paiement simulé (aucune carte n'est débitée, rien n'est enregistré).
@@ -19,7 +20,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 **Administration (compte administrateur)**
 
 - Tableau de bord : chiffre d'affaires encaissé, commandes à traiter, clients inscrits, stock faible.
-- Produits : création, modification, image, masquage, suppression.
+- Produits : création, modification, jusqu'à six images par produit, masquage, suppression.
 - Commandes : liste complète et changement de statut.
 - Utilisateurs : liste et changement de rôle.
 
@@ -63,7 +64,7 @@ Les pages sont rendues côté serveur et lisent la base directement via `src/lib
 | Route | Méthodes | Accès |
 |---|---|---|
 | `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me` | POST, POST, POST, GET | public |
-| `/api/products` | GET | public |
+| `/api/products`, `/api/products/[id]` | GET | public |
 | `/api/orders` | GET, POST | client |
 | `/api/orders/[id]` | GET | client (ses commandes uniquement) |
 | `/api/orders/[id]/pay` | POST | client |
@@ -98,7 +99,7 @@ Prérequis : Node.js 20.9 ou plus récent, et un projet [Supabase](https://supab
    npm install
    ```
 
-2. Dans l'éditeur SQL de Supabase, exécuter `supabase/schema.sql`, puis `supabase/seed.sql` (douze produits de démonstration).
+2. Dans l'éditeur SQL de Supabase, exécuter `supabase/schema.sql`, puis `supabase/seed.sql` (douze produits de démonstration). Le dossier `supabase/migrations/` ne sert qu'à mettre à niveau une base créée avec une version antérieure du schéma.
 
 3. Copier `.env.example` en `.env.local` et renseigner les trois variables :
 

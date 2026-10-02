@@ -1,15 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { ProductThumb } from "@/components/ProductThumb";
 import { api, type ClientApiError } from "@/lib/client-api";
 import { formatPrice } from "@/lib/format";
-import type { AdminProduct } from "@/lib/types";
-
-const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+import { MAX_IMAGE_BYTES, MAX_PRODUCT_IMAGES, type AdminProduct } from "@/lib/types";
 
 type Editing = { mode: "create" } | { mode: "edit"; product: AdminProduct } | null;
+
+// Image du formulaire : déjà enregistrée (url) ou choisie mais pas encore envoyée (file).
+type FormImage = { key: string; url: string; file?: File };
 
 const inputClass =
   "rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20";
@@ -85,8 +86,15 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
                 <tr key={product.id} className={busyId === product.id ? "opacity-50" : undefined}>
                   <td className="p-3 font-medium">
                     <div className="flex items-center gap-3">
-                      <ProductThumb src={product.image_url} name={product.name} size={40} />
-                      {product.name}
+                      <ProductThumb src={product.image_urls[0] ?? null} name={product.name} size={40} />
+                      <div>
+                        {product.name}
+                        <p className="font-normal text-stone-500">
+                          {product.image_urls.length === 0
+                            ? "Aucune image"
+                            : `${product.image_urls.length} image${product.image_urls.length > 1 ? "s" : ""}`}
+                        </p>
+                      </div>
                     </div>
                   </td>
                   <td className="p-3 text-right tabular-nums">{formatPrice(product.price_cents)}</td>
@@ -147,26 +155,48 @@ function ProductForm({
 }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<ClientApiError | null>(null);
-  const [imageUrl, setImageUrl] = useState(product?.image_url ?? null);
-  const [file, setFile] = useState<File | null>(null);
-  const [inputKey, setInputKey] = useState(0);
+  const [images, setImages] = useState<FormImage[]>(
+    () => product?.image_urls.map((url) => ({ key: url, url })) ?? [],
+  );
 
-  // Aperçu local du fichier choisi ; l'URL temporaire est libérée dès qu'elle n'est plus affichée.
-  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+  // Les aperçus locaux (blob:) sont libérés à la fermeture du formulaire.
+  const previewUrls = useRef<string[]>([]);
   useEffect(() => {
-    if (preview) return () => URL.revokeObjectURL(preview);
-  }, [preview]);
+    const urls = previewUrls.current;
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
 
-  function onFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const selected = event.target.files?.[0] ?? null;
-    if (selected && selected.size > MAX_IMAGE_BYTES) {
-      setError({ message: "", fields: { image_url: ["L'image ne doit pas dépasser 2 Mo."] } });
-      event.target.value = "";
+  const imageError = (message: string) => setError({ message: "", fields: { image_urls: [message] } });
+
+  function onFilesChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    setError(null);
+
+    if (files.some((file) => file.size > MAX_IMAGE_BYTES)) {
+      imageError("Chaque image doit faire 2 Mo au maximum.");
       return;
     }
-    setError(null);
-    setFile(selected);
+    if (images.length + files.length > MAX_PRODUCT_IMAGES) {
+      imageError(`${MAX_PRODUCT_IMAGES} images maximum par produit.`);
+      return;
+    }
+    setImages((current) => [
+      ...current,
+      ...files.map((file) => {
+        const url = URL.createObjectURL(file);
+        previewUrls.current.push(url);
+        return { key: url, url, file };
+      }),
+    ]);
   }
+
+  const removeImage = (key: string) => setImages((current) => current.filter((image) => image.key !== key));
+  const makeMain = (key: string) =>
+    setImages((current) => {
+      const chosen = current.find((image) => image.key === key);
+      return chosen ? [chosen, ...current.filter((image) => image.key !== key)] : current;
+    });
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -174,21 +204,26 @@ function ProductForm({
     setPending(true);
     setError(null);
 
-    // L'image part d'abord : le produit n'enregistre que l'URL renvoyée par le serveur.
-    let image_url = imageUrl;
-    if (file) {
-      const upload = new FormData();
-      upload.set("file", file);
-      const uploaded = await api<{ url: string }>("/api/admin/uploads", "POST", upload);
-      if (uploaded.error) {
-        setError({ message: "", fields: { image_url: [uploaded.error.message] } });
+    // Les nouvelles images partent d'abord : le produit n'enregistre que les URL renvoyées par le serveur.
+    const uploaded: FormImage[] = [];
+    for (const image of images) {
+      if (!image.file) {
+        uploaded.push(image);
+        continue;
+      }
+      const body = new FormData();
+      body.set("file", image.file);
+      const result = await api<{ url: string }>("/api/admin/uploads", "POST", body);
+      if (result.error) {
+        // Les images déjà envoyées sont conservées dans le formulaire pour ne pas les renvoyer.
+        setImages([...uploaded, ...images.slice(uploaded.length)]);
+        imageError(`${image.file.name} : ${result.error.message}`);
         setPending(false);
         return;
       }
-      image_url = uploaded.data.url;
-      setImageUrl(image_url);
-      setFile(null);
+      uploaded.push({ key: result.data.url, url: result.data.url });
     }
+    setImages(uploaded);
 
     const body = {
       name: form.get("name"),
@@ -196,7 +231,7 @@ function ProductForm({
       price_cents: Number(form.get("price_cents")),
       stock: Number(form.get("stock")),
       is_active: form.get("is_active") === "on",
-      image_url,
+      image_urls: uploaded.map((image) => image.url),
     };
 
     const result = product
@@ -221,38 +256,57 @@ function ProductForm({
       <h2 className="font-semibold">{product ? `Modifier « ${product.name} »` : "Nouveau produit"}</h2>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <div className="flex items-center gap-4 sm:col-span-2">
-          <ProductThumb src={preview ?? imageUrl} name={product?.name ?? "?"} size={80} />
-          <div className="flex flex-col gap-1.5 text-sm">
-            <label className="font-medium" htmlFor="product-image">
-              Image du produit
-            </label>
+        <fieldset className="flex flex-col gap-2 text-sm sm:col-span-2">
+          <legend className="font-medium">
+            Images ({images.length}/{MAX_PRODUCT_IMAGES})
+          </legend>
+
+          {images.length > 0 && (
+            <ul className="mt-2 flex flex-wrap gap-3">
+              {images.map((image, index) => (
+                <li key={image.key} className="flex w-24 flex-col items-center gap-1">
+                  <div className={`rounded-lg p-0.5 ${index === 0 ? "ring-2 ring-emerald-600" : ""}`}>
+                    <ProductThumb src={image.url} name={product?.name ?? "?"} size={88} />
+                  </div>
+                  {index === 0 ? (
+                    <span className="text-xs font-medium text-emerald-700">Principale</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => makeMain(image.key)}
+                      className="text-xs text-stone-600 hover:text-emerald-700"
+                    >
+                      Mettre en premier
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeImage(image.key)}
+                    className="text-xs text-stone-500 hover:text-red-600"
+                  >
+                    Retirer
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {images.length < MAX_PRODUCT_IMAGES && (
             <input
-              // Changer la clé recrée le champ, donc le vide, après un retrait d'image.
-              key={inputKey}
-              id="product-image"
               type="file"
+              multiple
+              aria-label="Ajouter des images"
               accept="image/jpeg,image/png,image/webp"
-              onChange={onFileChange}
-              className="text-sm file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-stone-200"
+              onChange={onFilesChange}
+              className="mt-1 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-stone-200"
             />
-            <span className="text-stone-500">JPEG, PNG ou WebP, 2 Mo maximum.</span>
-            {(file || imageUrl) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setFile(null);
-                  setImageUrl(null);
-                  setInputKey((key) => key + 1);
-                }}
-                className="self-start text-stone-500 hover:text-red-600"
-              >
-                Retirer l&apos;image
-              </button>
-            )}
-            {fieldError("image_url")}
-          </div>
-        </div>
+          )}
+          <span className="text-stone-500">
+            JPEG, PNG ou WebP, 2 Mo maximum par image. La première image est celle affichée dans le catalogue.
+          </span>
+          {fieldError("image_urls")}
+        </fieldset>
+
         <label className="flex flex-col gap-1.5 text-sm font-medium sm:col-span-2">
           Nom
           <input name="name" defaultValue={product?.name} className={inputClass} />
@@ -260,7 +314,7 @@ function ProductForm({
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium sm:col-span-2">
           Description
-          <textarea name="description" rows={2} defaultValue={product?.description} className={inputClass} />
+          <textarea name="description" rows={3} defaultValue={product?.description} className={inputClass} />
           {fieldError("description")}
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium">

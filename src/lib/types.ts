@@ -12,9 +12,13 @@ export type Product = {
   name: string;
   description: string;
   price_cents: number;
-  image_url: string | null;
+  /** Liste ordonnée ; la première image est la principale. */
+  image_urls: string[];
   stock: number;
 };
+
+export const MAX_PRODUCT_IMAGES = 6;
+export const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 export type AdminProduct = Product & { is_active: boolean };
 

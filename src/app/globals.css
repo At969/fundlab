@@ -22,6 +22,12 @@ body {
   }
 }
 
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes slide-in {
   from {
     opacity: 0;
@@ -56,6 +62,10 @@ body {
 
 .animate-pop {
   animation: pop 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s ease-out;
 }
 
 /* Apparition au défilement : le composant Reveal ajoute .is-visible quand le bloc entre à l'écran. */
@@ -111,6 +121,7 @@ body {
 /* Respect du réglage système « réduire les animations ». */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
+  .animate-fade-in,
   .animate-hero-card,
   .animate-pop {
     animation: none;
