@@ -57,7 +57,7 @@ export default async function ProductPage({ params }: Props) {
 
           <AddToCartButton
             product={product}
-            className="mt-8 w-full rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-stone-300 sm:w-auto"
+            className="mt-8 w-full rounded-md bg-brand-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-stone-300 sm:w-auto"
           />
         </div>
       </div>

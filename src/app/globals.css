@@ -4,6 +4,34 @@
   --font-sans: var(--font-geist-sans);
 }
 
+/* Palette tirée du logo FUND.lab : le bleu marine du mot « FUND » (brand) et le cyan
+   du mot « lab » (accent). Les verts restants (emerald) sont réservés aux états positifs :
+   commande livrée, produit en vente, produit en stock. */
+@theme {
+  --color-brand-50: #f1f5f8;
+  --color-brand-100: #dfe7ee;
+  --color-brand-200: #c0cfdc;
+  --color-brand-300: #93a9bd;
+  --color-brand-400: #627e97;
+  --color-brand-500: #45627c;
+  --color-brand-600: #334c63;
+  --color-brand-700: #273b4e;
+  --color-brand-800: #1b2a39;
+  --color-brand-900: #14202c;
+  --color-brand-950: #0c141c;
+
+  --color-accent-50: #ecfafd;
+  --color-accent-100: #d0f2fa;
+  --color-accent-200: #a6e5f4;
+  --color-accent-300: #6fd3eb;
+  --color-accent-400: #30b8d8;
+  --color-accent-500: #1a9cbd;
+  --color-accent-600: #167e9f;
+  --color-accent-700: #176681;
+  --color-accent-800: #19546a;
+  --color-accent-900: #19465a;
+}
+
 body {
   background: var(--color-stone-50);
   color: var(--color-stone-900);

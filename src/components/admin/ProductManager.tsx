@@ -13,7 +13,7 @@ type Editing = { mode: "create" } | { mode: "edit"; product: AdminProduct } | nu
 type FormImage = { key: string; url: string; file?: File };
 
 const inputClass =
-  "rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20";
+  "rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-accent-600 focus:ring-2 focus:ring-accent-500/25";
 
 export function ProductManager({ products }: { products: AdminProduct[] }) {
   const router = useRouter();
@@ -42,7 +42,7 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
         <button
           type="button"
           onClick={() => setEditing({ mode: "create" })}
-          className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+          className="rounded-md bg-brand-900 px-3 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
           Nouveau produit
         </button>
@@ -127,7 +127,7 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
                       <button
                         type="button"
                         onClick={() => setEditing({ mode: "edit", product })}
-                        className="font-medium text-emerald-700 hover:underline"
+                        className="font-medium text-accent-700 hover:underline"
                       >
                         Modifier
                       </button>
@@ -272,16 +272,16 @@ function ProductForm({
             <ul className="mt-2 flex flex-wrap gap-3">
               {images.map((image, index) => (
                 <li key={image.key} className="flex w-24 flex-col items-center gap-1">
-                  <div className={`rounded-lg p-0.5 ${index === 0 ? "ring-2 ring-emerald-600" : ""}`}>
+                  <div className={`rounded-lg p-0.5 ${index === 0 ? "ring-2 ring-accent-500" : ""}`}>
                     <ProductThumb src={image.url} name={product?.name ?? "?"} size={88} />
                   </div>
                   {index === 0 ? (
-                    <span className="text-xs font-medium text-emerald-700">Principale</span>
+                    <span className="text-xs font-medium text-accent-700">Principale</span>
                   ) : (
                     <button
                       type="button"
                       onClick={() => makeMain(image.key)}
-                      className="text-xs text-stone-600 hover:text-emerald-700"
+                      className="text-xs text-stone-600 hover:text-accent-700"
                     >
                       Mettre en premier
                     </button>
@@ -346,7 +346,7 @@ function ProductForm({
             name="is_active"
             type="checkbox"
             defaultChecked={product?.is_active ?? true}
-            className="h-4 w-4 accent-emerald-700"
+            className="h-4 w-4 accent-brand-900"
           />
           Visible dans la boutique
         </label>
@@ -362,7 +362,7 @@ function ProductForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-60"
+          className="rounded-md bg-brand-900 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
         >
           {pending ? "Enregistrement…" : "Enregistrer"}
         </button>

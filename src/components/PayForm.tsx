@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/format";
 
 const SIMULATED_DELAY_MS = 1500;
 const inputClass =
-  "rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20";
+  "rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-accent-600 focus:ring-2 focus:ring-accent-500/25";
 
 export function PayForm({ orderId, amount }: { orderId: string; amount: number }) {
   const router = useRouter();
@@ -77,7 +77,7 @@ export function PayForm({ orderId, amount }: { orderId: string; amount: number }
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-60"
+          className="rounded-md bg-brand-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
         >
           {pending ? "Paiement en cours…" : `Payer ${formatPrice(amount)}`}
         </button>

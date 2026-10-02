@@ -7,7 +7,7 @@ import { MobileMenu } from "@/components/MobileMenu";
 
 const linkClass = "text-stone-600 hover:text-stone-900";
 const mobileLinkClass = "rounded-md px-2 py-2 text-stone-700 hover:bg-stone-100";
-const registerClass = "rounded-md bg-emerald-700 px-3 py-1.5 font-medium text-white hover:bg-emerald-800";
+const registerClass = "rounded-md bg-brand-900 px-3 py-1.5 font-medium text-white hover:bg-brand-700";
 
 export async function Header() {
   const user = await getCurrentUser();

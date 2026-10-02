@@ -105,7 +105,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-emerald-700 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-800 disabled:opacity-60"
+          className="rounded-md bg-brand-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700 disabled:opacity-60"
         >
           {pending ? copy.pending : copy.submit}
         </button>
@@ -115,7 +115,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         {copy.altText}{" "}
         <Link
           href={next === "/" ? copy.altHref : `${copy.altHref}?next=${encodeURIComponent(next)}`}
-          className="font-medium text-emerald-700 hover:underline"
+          className="font-medium text-accent-700 hover:underline"
         >
           {copy.altLink}
         </Link>
@@ -149,7 +149,7 @@ function Field({
         autoComplete={autoComplete}
         required
         aria-invalid={Boolean(error)}
-        className="rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/20 aria-invalid:border-red-500"
+        className="rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-accent-600 focus:ring-2 focus:ring-accent-500/25 aria-invalid:border-red-500"
       />
       {error ? (
         <span className="font-normal text-red-600">{error}</span>

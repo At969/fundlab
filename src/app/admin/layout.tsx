@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: { default: "Administration", template
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">Administration</p>
+      <p className="text-sm font-medium uppercase tracking-wide text-accent-700">Administration</p>
       <AdminNav />
       <div className="mt-8">{children}</div>
     </div>

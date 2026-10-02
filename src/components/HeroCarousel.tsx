@@ -37,7 +37,7 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
     <section
       aria-roledescription="carrousel"
       aria-label="À la une"
-      className="relative overflow-hidden rounded-2xl bg-emerald-900 text-white sm:rounded-3xl"
+      className="relative overflow-hidden rounded-2xl bg-brand-900 text-white sm:rounded-3xl"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}

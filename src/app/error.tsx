@@ -8,7 +8,7 @@ export default function ErrorPage({ retry }: { error: Error; retry: () => void }
       <button
         type="button"
         onClick={() => retry()}
-        className="mt-4 rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+        className="mt-4 rounded-md bg-brand-900 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
       >
         Réessayer
       </button>

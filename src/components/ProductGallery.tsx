@@ -11,7 +11,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
     return (
       <div
         aria-hidden
-        className="flex aspect-square items-center justify-center rounded-2xl bg-emerald-50 text-9xl font-semibold text-emerald-700/40"
+        className="flex aspect-square items-center justify-center rounded-2xl bg-accent-50 text-9xl font-semibold text-accent-700/40"
       >
         {name.charAt(0).toUpperCase()}
       </div>
@@ -43,7 +43,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
                 aria-current={index === selected}
                 onClick={() => setSelected(index)}
                 className={`relative block h-16 w-16 overflow-hidden rounded-lg border-2 bg-white transition ${
-                  index === selected ? "border-emerald-700" : "border-transparent opacity-70 hover:opacity-100"
+                  index === selected ? "border-accent-500" : "border-transparent opacity-70 hover:opacity-100"
                 }`}
               >
                 <Image src={url} alt="" fill sizes="64px" className="object-cover" />

@@ -9,7 +9,7 @@ export function ProductThumb({ src, name, size }: { src: string | null; name: st
       <span
         aria-hidden
         style={{ ...style, fontSize: size / 2.5 }}
-        className="flex shrink-0 items-center justify-center rounded-md bg-emerald-50 font-semibold text-emerald-700/50"
+        className="flex shrink-0 items-center justify-center rounded-md bg-accent-50 font-semibold text-accent-700/50"
       >
         {name.charAt(0).toUpperCase()}
       </span>

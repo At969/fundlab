@@ -18,7 +18,7 @@ export function CartView() {
     return (
       <div className="mt-6">
         <p className="text-stone-600">Votre panier est vide.</p>
-        <Link href="/products" className="mt-3 inline-block font-medium text-emerald-700 hover:underline">
+        <Link href="/products" className="mt-3 inline-block font-medium text-accent-700 hover:underline">
           Voir les produits
         </Link>
       </div>
@@ -45,7 +45,7 @@ export function CartView() {
         </div>
         <Link
           href="/checkout"
-          className="mt-4 block rounded-md bg-emerald-700 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-emerald-800"
+          className="mt-4 block rounded-md bg-brand-900 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-brand-700"
         >
           Passer la commande
         </Link>

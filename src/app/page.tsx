@@ -15,14 +15,14 @@ import type { Product } from "@/lib/types";
 const FEATURED_COUNT = 3;
 
 const primaryButton =
-  "rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800 hover:shadow-lg active:translate-y-0";
+  "rounded-md bg-brand-900 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg active:translate-y-0";
 
 // Diapositive du bandeau ; la marge basse laisse la place aux commandes du carrousel.
 const slideClass =
   "grid h-full items-center gap-8 px-5 pt-10 pb-20 *:min-w-0 sm:gap-10 sm:px-12 sm:pt-12 md:grid-cols-[1.2fr_1fr] md:pt-16 md:pb-24";
 
 const heroButton =
-  "rounded-md bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-lg active:translate-y-0";
+  "rounded-md bg-white px-5 py-3 text-sm font-semibold text-brand-900 transition hover:-translate-y-0.5 hover:bg-accent-50 hover:shadow-lg active:translate-y-0";
 
 const heroLink = "text-sm font-semibold text-white underline-offset-4 hover:underline";
 
@@ -74,7 +74,7 @@ export default async function HomePage() {
       <HeroCarousel>
         <div className={slideClass}>
           <div>
-            <p className="animate-fade-up text-sm font-medium uppercase tracking-widest text-emerald-300">
+            <p className="animate-fade-up text-sm font-medium uppercase tracking-widest text-accent-300">
               Votre boutique en ligne
             </p>
             <h1
@@ -83,7 +83,7 @@ export default async function HomePage() {
             >
               Vos produits du quotidien, commandés en quelques clics.
             </h1>
-            <p style={delay(0.2)} className="animate-fade-up mt-5 max-w-md text-lg text-emerald-100/90">
+            <p style={delay(0.2)} className="animate-fade-up mt-5 max-w-md text-lg text-brand-100/90">
               Remplissez votre panier, validez votre commande et suivez-la jusqu&apos;à la livraison.
             </p>
             <div style={delay(0.3)} className="animate-fade-up mt-8 flex flex-wrap items-center gap-4">
@@ -105,7 +105,7 @@ export default async function HomePage() {
                   key={product.id}
                   // Décalage en escalier (grand écran seulement) et entrée l'une après l'autre, décoratifs.
                   style={{ "--shift": `${index * 1.25}rem`, ...delay(0.3 + index * 0.15) } as CSSProperties}
-                  className="animate-hero-card flex items-center gap-3 sm:ml-(--shift) sm:gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
+                  className="animate-hero-card flex items-center gap-3 sm:ml-(--shift) sm:gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-brand-950/30"
                 >
                   <ProductThumb src={product.image_urls[0] ?? null} name={product.name} size={56} />
                   <div className="min-w-0 flex-1">
@@ -122,14 +122,14 @@ export default async function HomePage() {
         {featured.map((product) => (
           <div key={product.id} className={slideClass}>
             <div>
-              <p className="text-sm font-medium uppercase tracking-widest text-emerald-300">À la une</p>
+              <p className="text-sm font-medium uppercase tracking-widest text-accent-300">À la une</p>
               <h2 className="mt-4 text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
                 <Link href={`/products/${product.id}`} className="hover:underline">
                   {product.name}
                 </Link>
               </h2>
               {product.description && (
-                <p className="mt-4 line-clamp-2 max-w-md text-lg text-emerald-100/90">{product.description}</p>
+                <p className="mt-4 line-clamp-2 max-w-md text-lg text-brand-100/90">{product.description}</p>
               )}
               <p className="mt-5 text-2xl font-semibold tabular-nums">{formatPrice(product.price_cents)}</p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -140,7 +140,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="relative mx-auto aspect-[4/3] w-full max-w-sm overflow-hidden rounded-2xl bg-emerald-800 shadow-xl shadow-emerald-950/40">
+            <div className="relative mx-auto aspect-[4/3] w-full max-w-sm overflow-hidden rounded-2xl bg-brand-800 shadow-xl shadow-brand-950/40">
               {product.image_urls[0] ? (
                 <Image
                   src={product.image_urls[0]}
@@ -152,7 +152,7 @@ export default async function HomePage() {
               ) : (
                 <span
                   aria-hidden
-                  className="flex h-full items-center justify-center text-8xl font-semibold text-emerald-300/40"
+                  className="flex h-full items-center justify-center text-8xl font-semibold text-accent-300/40"
                 >
                   {product.name.charAt(0).toUpperCase()}
                 </span>
@@ -170,7 +170,7 @@ export default async function HomePage() {
             </h2>
             <p className="mt-1 text-stone-600">Une sélection de notre catalogue, prête à être ajoutée au panier.</p>
           </div>
-          <Link href="/products" className="text-sm font-semibold text-emerald-700 hover:underline">
+          <Link href="/products" className="text-sm font-semibold text-accent-700 hover:underline">
             Tout le catalogue ({products.length}) →
           </Link>
         </div>
@@ -196,7 +196,7 @@ export default async function HomePage() {
               key={advantage.title}
               className="rounded-xl border border-stone-200 bg-white p-5 hover:-translate-y-1 hover:shadow-lg"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-50 text-accent-700">
                 <svg
                   aria-hidden
                   viewBox="0 0 24 24"
@@ -223,8 +223,8 @@ export default async function HomePage() {
         </h2>
         <Reveal as="ol" stagger className="mt-6 grid gap-6 sm:grid-cols-3">
           {STEPS.map((step, index) => (
-            <li key={step.title} className="border-t-2 border-emerald-700 pt-4">
-              <p className="text-sm font-semibold text-emerald-700 tabular-nums">Étape {index + 1}</p>
+            <li key={step.title} className="border-t-2 border-accent-500 pt-4">
+              <p className="text-sm font-semibold text-accent-700 tabular-nums">Étape {index + 1}</p>
               <h3 className="mt-1 text-lg font-semibold">{step.title}</h3>
               <p className="mt-1 text-stone-600">{step.text}</p>
             </li>
@@ -232,7 +232,7 @@ export default async function HomePage() {
         </Reveal>
       </section>
 
-      <Reveal as="section" className="rounded-3xl bg-emerald-50 px-5 py-10 text-center sm:px-12 sm:py-12">
+      <Reveal as="section" className="rounded-3xl bg-accent-50 px-5 py-10 text-center sm:px-12 sm:py-12">
         <h2 className="text-2xl font-semibold tracking-tight text-balance">Prêt à remplir votre panier ?</h2>
         <p className="mx-auto mt-2 max-w-md text-stone-600">
           {user
@@ -244,7 +244,7 @@ export default async function HomePage() {
             {user ? "Voir les produits" : "Créer un compte"}
           </Link>
           {!user && (
-            <Link href="/products" className="text-sm font-semibold text-emerald-800 hover:underline">
+            <Link href="/products" className="text-sm font-semibold text-accent-800 hover:underline">
               Parcourir sans compte
             </Link>
           )}

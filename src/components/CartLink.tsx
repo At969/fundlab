@@ -14,7 +14,7 @@ export function CartLink() {
         <span
           // La clé relance la petite animation à chaque changement de quantité.
           key={count}
-          className="animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-xs font-medium text-white tabular-nums"
+          className="animate-pop rounded-full bg-brand-900 px-2 py-0.5 text-xs font-medium text-white tabular-nums"
         >
           {count}
         </span>

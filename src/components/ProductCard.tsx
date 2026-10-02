@@ -29,7 +29,7 @@ export function ProductCard({ product }: { product: Product }) {
             className="object-cover transition duration-500 group-hover:scale-105"
           />
         ) : (
-          <span className="flex h-full items-center justify-center bg-emerald-50 text-5xl font-semibold text-emerald-700/40">
+          <span className="flex h-full items-center justify-center bg-accent-50 text-5xl font-semibold text-accent-700/40">
             {product.name.charAt(0)}
           </span>
         )}
@@ -37,7 +37,7 @@ export function ProductCard({ product }: { product: Product }) {
 
       <div className="flex flex-1 flex-col gap-1 p-4">
         <h2 className="font-medium">
-          <Link href={href} className="hover:text-emerald-700 hover:underline">
+          <Link href={href} className="hover:text-accent-700 hover:underline">
             {product.name}
           </Link>
         </h2>
@@ -54,7 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
             type="button"
             onClick={() => add(product)}
             disabled={soldOut || maxReached}
-            className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-800 active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300"
+            className="rounded-md bg-brand-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300"
           >
             {inCart > 0 ? `Ajouter (${inCart})` : "Ajouter"}
           </button>
