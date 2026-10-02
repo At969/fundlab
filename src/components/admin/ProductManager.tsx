@@ -197,12 +197,20 @@ function ProductForm({
     ]);
   }
 
-  const removeImage = (key: string) => setImages((current) => current.filter((image) => image.key !== key));
-  const makeMain = (key: string) =>
+  // Toute action sur les images efface un éventuel message d'erreur devenu sans objet
+  // (« 6 images maximum » n'a plus lieu d'être après un retrait).
+  function removeImage(key: string) {
+    setError(null);
+    setImages((current) => current.filter((image) => image.key !== key));
+  }
+
+  function makeMain(key: string) {
+    setError(null);
     setImages((current) => {
       const chosen = current.find((image) => image.key === key);
       return chosen ? [chosen, ...current.filter((image) => image.key !== key)] : current;
     });
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
