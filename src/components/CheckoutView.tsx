@@ -89,7 +89,9 @@ export function CheckoutView({ defaultName }: { defaultName: string }) {
             {fieldError("city")}
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-medium sm:col-span-2">
-            Instructions pour le livreur <span className="font-normal text-stone-500">(facultatif)</span>
+            <span>
+              Instructions pour le livreur <span className="font-normal text-stone-500">(facultatif)</span>
+            </span>
             <textarea name="notes" rows={2} className={inputClass} />
             {fieldError("notes")}
           </label>

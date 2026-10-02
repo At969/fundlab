@@ -37,13 +37,16 @@ const phone = z
   .transform((value) => value.replace(/[\s.-]/g, ""))
   .pipe(z.string().regex(/^\+?\d{8,15}$/, { error: "Numéro de téléphone invalide." }));
 
-export const deliverySchema = z.object({
-  name: z.string().trim().min(2, { error: "Indiquez le nom du destinataire." }).max(80),
-  phone,
-  address: z.string().trim().min(5, { error: "Indiquez une adresse de livraison." }).max(200),
-  city: z.string().trim().min(2, { error: "Indiquez la ville." }).max(80),
-  notes: z.string().trim().max(300, { error: "300 caractères maximum." }).optional(),
-});
+export const deliverySchema = z.object(
+  {
+    name: z.string().trim().min(2, { error: "Indiquez le nom du destinataire." }).max(80),
+    phone,
+    address: z.string().trim().min(5, { error: "Indiquez une adresse de livraison." }).max(200),
+    city: z.string().trim().min(2, { error: "Indiquez la ville." }).max(80),
+    notes: z.string().trim().max(300, { error: "300 caractères maximum." }).optional(),
+  },
+  { error: "Les informations de livraison sont requises." },
+);
 
 export const createOrderSchema = z.object({
   delivery: deliverySchema,
