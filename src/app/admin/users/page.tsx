@@ -15,7 +15,7 @@ export default async function AdminUsersPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Utilisateurs</h1>
 
       <div className="mt-6 overflow-x-auto rounded-lg border border-stone-200 bg-white">
-        <table className="w-full min-w-[40rem] text-left text-sm">
+        <table className="table-cards w-full text-left text-sm md:min-w-[40rem]">
           <thead className="border-b border-stone-200 text-stone-500">
             <tr>
               <th className="p-3 font-medium">Nom</th>
@@ -31,9 +31,13 @@ export default async function AdminUsersPage() {
                   {user.name}
                   {user.id === admin.id && <span className="ml-2 font-normal text-stone-500">(vous)</span>}
                 </td>
-                <td className="p-3">{user.email}</td>
-                <td className="p-3 text-stone-500">{formatDate(user.created_at)}</td>
-                <td className="p-3">
+                <td data-label="Adresse e-mail" className="p-3 wrap-anywhere">
+                  {user.email}
+                </td>
+                <td data-label="Inscription" className="p-3 text-stone-500">
+                  {formatDate(user.created_at)}
+                </td>
+                <td data-label="Rôle" className="p-3">
                   <UserRoleSelect userId={user.id} role={user.role} disabled={user.id === admin.id} />
                 </td>
               </tr>

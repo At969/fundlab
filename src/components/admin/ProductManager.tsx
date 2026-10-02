@@ -71,7 +71,7 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
         <p className="mt-6 text-stone-600">Aucun produit. Créez le premier avec « Nouveau produit ».</p>
       ) : (
         <div className="mt-6 overflow-x-auto rounded-lg border border-stone-200 bg-white">
-          <table className="w-full min-w-[40rem] text-left text-sm">
+          <table className="table-cards w-full text-left text-sm md:min-w-[40rem]">
             <thead className="border-b border-stone-200 text-stone-500">
               <tr>
                 <th className="p-3 font-medium">Produit</th>
@@ -97,11 +97,16 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
                       </div>
                     </div>
                   </td>
-                  <td className="p-3 text-right tabular-nums">{formatPrice(product.price_cents)}</td>
-                  <td className={`p-3 text-right tabular-nums ${product.stock === 0 ? "text-red-600" : ""}`}>
+                  <td data-label="Prix" className="p-3 text-right tabular-nums">
+                    {formatPrice(product.price_cents)}
+                  </td>
+                  <td
+                    data-label="Stock"
+                    className={`p-3 text-right tabular-nums ${product.stock === 0 ? "text-red-600" : ""}`}
+                  >
                     {product.stock}
                   </td>
-                  <td className="p-3">
+                  <td data-label="En vente" className="p-3">
                     <button
                       type="button"
                       disabled={busyId === product.id}
@@ -117,22 +122,24 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
                       {product.is_active ? "Oui" : "Masqué"}
                     </button>
                   </td>
-                  <td className="p-3 text-right whitespace-nowrap">
-                    <button
-                      type="button"
-                      onClick={() => setEditing({ mode: "edit", product })}
-                      className="font-medium text-emerald-700 hover:underline"
-                    >
-                      Modifier
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busyId === product.id}
-                      onClick={() => remove(product)}
-                      className="ml-4 text-stone-500 hover:text-red-600"
-                    >
-                      Supprimer
-                    </button>
+                  <td data-label="Actions" className="p-3 text-right whitespace-nowrap">
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setEditing({ mode: "edit", product })}
+                        className="font-medium text-emerald-700 hover:underline"
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busyId === product.id}
+                        onClick={() => remove(product)}
+                        className="ml-4 text-stone-500 hover:text-red-600"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

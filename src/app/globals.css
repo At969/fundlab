@@ -109,6 +109,53 @@ body {
   --stagger: 0.3s;
 }
 
+/* ---------- Tableaux d'administration ---------- */
+
+/* Sous 768 px, chaque ligne devient une carte : l'en-tête est masqué et chaque cellule
+   affiche son intitulé (attribut data-label) en face de sa valeur. Une cellule sans
+   data-label sert de titre à la carte. */
+@media (width < 48rem) {
+  .table-cards thead {
+    display: none;
+  }
+
+  .table-cards,
+  .table-cards tbody,
+  .table-cards tr {
+    display: block;
+  }
+
+  .table-cards tr {
+    padding: 0.5rem 0;
+  }
+
+  .table-cards td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.375rem 1rem;
+    text-align: right;
+  }
+
+  .table-cards td::before {
+    content: attr(data-label);
+    flex: none;
+    color: var(--color-stone-500);
+    font-weight: 500;
+    text-align: left;
+  }
+
+  .table-cards td:not([data-label]) {
+    display: block;
+    text-align: left;
+  }
+
+  .table-cards td:not([data-label])::before {
+    content: none;
+  }
+}
+
 /* Sans JavaScript, rien ne doit rester invisible. */
 @media (scripting: none) {
   .reveal,
