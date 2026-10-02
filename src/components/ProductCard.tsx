@@ -26,8 +26,8 @@ export function ProductCard({ product }: { product: Product }) {
             src={image}
             alt=""
             fill
-            sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 100vw"
-            className="object-contain p-4 transition duration-500 group-hover:scale-105"
+            sizes="(min-width: 1024px) 320px, 50vw"
+            className="object-contain p-2 transition duration-500 group-hover:scale-105 sm:p-4"
           />
         ) : (
           <span className="flex h-full items-center justify-center bg-accent-50 text-5xl font-semibold text-accent-700/40">
@@ -36,15 +36,16 @@ export function ProductCard({ product }: { product: Product }) {
         )}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <h2 className="font-medium">
+      <div className="flex flex-1 flex-col gap-1 p-3 sm:p-4">
+        <h2 className="line-clamp-2 text-sm font-medium sm:text-base">
           <Link href={href} className="hover:text-accent-700 hover:underline">
             {product.name}
           </Link>
         </h2>
-        <p className="line-clamp-2 flex-1 text-sm text-stone-600">{product.description}</p>
+        {/* Sur téléphone (deux cartes par ligne), la description est réservée à la fiche produit. */}
+        <p className="line-clamp-2 flex-1 text-sm text-stone-600 max-sm:hidden">{product.description}</p>
 
-        <div className="mt-3 flex items-center justify-between gap-3">
+        <div className="mt-auto flex flex-col gap-2 pt-2 sm:mt-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:pt-0">
           <div>
             <p className="font-semibold tabular-nums">{formatPrice(product.price_cents)}</p>
             <p className="text-xs text-stone-500">
@@ -55,7 +56,7 @@ export function ProductCard({ product }: { product: Product }) {
             type="button"
             onClick={() => add(product)}
             disabled={soldOut || maxReached}
-            className="rounded-md bg-brand-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300"
+            className="rounded-md bg-brand-900 px-3 py-2 text-sm max-sm:w-full font-medium text-white transition hover:bg-brand-700 active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300"
           >
             {inCart > 0 ? `Ajouter (${inCart})` : "Ajouter"}
           </button>

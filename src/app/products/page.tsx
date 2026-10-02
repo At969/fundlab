@@ -22,7 +22,7 @@ export default async function ProductsPage() {
           <p className="mt-1 text-stone-500">
             {products.length} produit{products.length > 1 ? "s" : ""} disponible{products.length > 1 ? "s" : ""}
           </p>
-          <ul className="animate-fade-up mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="animate-fade-up mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
