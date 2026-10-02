@@ -2,7 +2,7 @@
 
 Mini-application de gestion de commandes pour un petit commerce, réalisée pour le test technique FUND.lab Challenge.
 
-- **Application en ligne** : <!-- TODO : lien Vercel -->
+- **Application en ligne** : https://fundlabshop.vercel.app
 - **Dépôt** : https://github.com/At969/fundlab
 
 ## Fonctionnalités
