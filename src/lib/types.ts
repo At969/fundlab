@@ -40,12 +40,38 @@ export type OrderItem = {
   quantity: number;
 };
 
+// Opérateurs de mobile money proposés au paiement (simulé).
+export const PAYMENT_METHODS = ["mtn", "moov", "orange", "wave"] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
+export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  mtn: "MTN Mobile Money",
+  moov: "Moov Money",
+  orange: "Orange Money",
+  wave: "Wave",
+};
+
+export type Delivery = {
+  name: string;
+  phone: string;
+  address: string;
+  city: string;
+  notes?: string;
+};
+
 export type Order = {
   id: string;
   status: OrderStatus;
   total_cents: number;
   created_at: string;
   paid_at: string | null;
+  payment_method: PaymentMethod | null;
+  // Vides sur les commandes passées avant l'ajout de la livraison.
+  delivery_name: string | null;
+  delivery_phone: string | null;
+  delivery_address: string | null;
+  delivery_city: string | null;
+  delivery_notes: string | null;
   order_items: OrderItem[];
 };
 

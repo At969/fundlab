@@ -36,7 +36,14 @@ create table orders (
   status order_status not null default 'pending',
   total_cents integer not null check (total_cents >= 0),
   created_at timestamptz not null default now(),
-  paid_at timestamptz
+  paid_at timestamptz,
+  -- Opérateur de mobile money choisi au paiement (simulé).
+  payment_method text,
+  delivery_name text,
+  delivery_phone text,
+  delivery_address text,
+  delivery_city text,
+  delivery_notes text
 );
 
 create index orders_user_id_idx on orders (user_id, created_at desc);
@@ -64,7 +71,8 @@ alter table order_items enable row level security;
 -- Création atomique d'une commande : les prix viennent de la base (jamais du client),
 -- le stock est vérifié et décrémenté dans la même transaction.
 -- p_items : [{"product_id": "<uuid>", "quantity": 2}, ...]
-create or replace function create_order(p_user_id uuid, p_items jsonb)
+-- p_delivery : {"name": "...", "phone": "...", "address": "...", "city": "...", "notes": "..."}
+create or replace function create_order(p_user_id uuid, p_items jsonb, p_delivery jsonb)
 returns uuid
 language plpgsql
 as $$
@@ -78,7 +86,16 @@ begin
     raise exception 'EMPTY_CART';
   end if;
 
-  insert into orders (user_id, total_cents) values (p_user_id, 0) returning id into v_order_id;
+  insert into orders (
+    user_id, total_cents,
+    delivery_name, delivery_phone, delivery_address, delivery_city, delivery_notes
+  )
+  values (
+    p_user_id, 0,
+    p_delivery ->> 'name', p_delivery ->> 'phone', p_delivery ->> 'address',
+    p_delivery ->> 'city', nullif(p_delivery ->> 'notes', '')
+  )
+  returning id into v_order_id;
 
   -- Quantités regroupées par produit, verrouillage dans un ordre stable (évite les deadlocks).
   for v_item in
@@ -112,4 +129,4 @@ begin
 end;
 $$;
 
-revoke execute on function create_order(uuid, jsonb) from public, anon, authenticated;
+revoke execute on function create_order(uuid, jsonb, jsonb) from public, anon, authenticated;

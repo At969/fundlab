@@ -1,19 +1,21 @@
 import "server-only";
 import { ApiError } from "@/lib/api";
 import { db } from "@/lib/supabase";
-import type { AdminOrder, Order, OrderStatus } from "@/lib/types";
+import type { AdminOrder, Delivery, Order, OrderStatus, PaymentMethod } from "@/lib/types";
 
+// Une seule chaîne littérale : le client Supabase en déduit le type des lignes renvoyées.
 const ORDER_COLUMNS =
-  "id, status, total_cents, created_at, paid_at, order_items(id, product_name, unit_price_cents, quantity)";
+  "id, status, total_cents, created_at, paid_at, payment_method, delivery_name, delivery_phone, delivery_address, delivery_city, delivery_notes, order_items(id, product_name, unit_price_cents, quantity)";
 
 type CartLine = { productId: string; quantity: number };
 
 // La fonction SQL create_order fait tout dans une transaction (prix lus en base,
 // contrôle et décrément du stock). Ses exceptions sont traduites en erreurs d'API.
-export async function createOrder(userId: string, items: CartLine[]): Promise<string> {
+export async function createOrder(userId: string, items: CartLine[], delivery: Delivery): Promise<string> {
   const { data, error } = await db.rpc("create_order", {
     p_user_id: userId,
     p_items: items.map((item) => ({ product_id: item.productId, quantity: item.quantity })),
+    p_delivery: delivery,
   });
 
   if (error) {
@@ -59,10 +61,10 @@ export async function getOrderForUser(orderId: string, userId: string): Promise<
 
 // Mise à jour conditionnelle (status = 'pending') : deux paiements simultanés
 // ne peuvent pas passer tous les deux.
-export async function payOrder(orderId: string, userId: string): Promise<Order> {
+export async function payOrder(orderId: string, userId: string, method: PaymentMethod): Promise<Order> {
   const { data, error } = await db
     .from("orders")
-    .update({ status: "paid", paid_at: new Date().toISOString() })
+    .update({ status: "paid", paid_at: new Date().toISOString(), payment_method: method })
     .eq("id", orderId)
     .eq("user_id", userId)
     .eq("status", "pending")

@@ -12,7 +12,7 @@ export const GET = handler(async () => {
 // Le client n'envoie que des identifiants et des quantités : prix et total viennent de la base.
 export const POST = handler(async (request: Request) => {
   const user = await requireCustomer();
-  const { items } = await parseBody(request, createOrderSchema);
-  const id = await createOrder(user.id, items);
+  const { items, delivery } = await parseBody(request, createOrderSchema);
+  const id = await createOrder(user.id, items, delivery);
   return NextResponse.json({ id }, { status: 201 });
 });

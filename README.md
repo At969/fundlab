@@ -14,7 +14,8 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 - Fiche détaillée par produit, avec galerie de photos.
 - Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
 - Inscription, connexion et déconnexion.
-- Validation de commande, puis paiement simulé (aucune carte n'est débitée, rien n'est enregistré).
+- Validation de commande avec les informations de livraison (destinataire, téléphone, adresse, ville).
+- Paiement par mobile money simulé (MTN, Moov, Orange, Wave) : aucun compte n'est débité, le numéro n'est pas enregistré.
 - Historique des commandes avec leur statut.
 
 **Administration (compte administrateur)**
@@ -128,7 +129,7 @@ Le dépôt est relié à Vercel : chaque push sur `main` déclenche un déploiem
 
 ## Limites connues
 
-- Le paiement est une simulation : aucun prestataire n'est appelé.
+- Le paiement mobile money est une simulation : aucun opérateur n'est appelé.
 - Annuler une commande ne remet pas les articles en stock.
 - L'administrateur peut passer une commande d'un statut à n'importe quel autre, sans ordre imposé.
 - Pas de tests automatisés ; les routes ont été vérifiées manuellement.

@@ -55,7 +55,11 @@ export async function parseBody<T extends z.ZodType>(request: Request, schema: T
   }
   const result = schema.safeParse(json);
   if (!result.success) {
-    const fields = z.flattenError(result.error).fieldErrors as Record<string, string[]>;
+    // Une entrée par champ, repéré par son chemin (« email », « delivery.phone »).
+    const fields: Record<string, string[]> = {};
+    for (const issue of result.error.issues) {
+      (fields[issue.path.join(".")] ??= []).push(issue.message);
+    }
     throw new ApiError(422, "VALIDATION_ERROR", "Certains champs sont invalides.", fields);
   }
   return result.data;

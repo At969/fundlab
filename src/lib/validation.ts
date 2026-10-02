@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_PRODUCT_IMAGES, ORDER_STATUSES } from "@/lib/types";
+import { MAX_PRODUCT_IMAGES, ORDER_STATUSES, PAYMENT_METHODS } from "@/lib/types";
 
 const email = z
   .string()
@@ -30,7 +30,23 @@ export const loginSchema = z.object({
 
 export const idSchema = z.uuid({ error: "Identifiant invalide." });
 
+// Numéro de téléphone : espaces, points et tirets tolérés à la saisie, puis retirés.
+// Les longueurs varient selon les pays de la zone (8 à 10 chiffres, indicatif en plus).
+const phone = z
+  .string()
+  .transform((value) => value.replace(/[\s.-]/g, ""))
+  .pipe(z.string().regex(/^\+?\d{8,15}$/, { error: "Numéro de téléphone invalide." }));
+
+export const deliverySchema = z.object({
+  name: z.string().trim().min(2, { error: "Indiquez le nom du destinataire." }).max(80),
+  phone,
+  address: z.string().trim().min(5, { error: "Indiquez une adresse de livraison." }).max(200),
+  city: z.string().trim().min(2, { error: "Indiquez la ville." }).max(80),
+  notes: z.string().trim().max(300, { error: "300 caractères maximum." }).optional(),
+});
+
 export const createOrderSchema = z.object({
+  delivery: deliverySchema,
   items: z
     .array(
       z.object({
@@ -42,14 +58,10 @@ export const createOrderSchema = z.object({
     .max(100),
 });
 
-// Paiement simulé : seul le format est contrôlé, rien n'est conservé ni transmis.
+// Paiement mobile money simulé : le numéro est seulement contrôlé, jamais enregistré ni transmis.
 export const paymentSchema = z.object({
-  cardNumber: z
-    .string()
-    .transform((value) => value.replace(/[\s-]/g, ""))
-    .pipe(z.string().regex(/^\d{16}$/, { error: "Le numéro de carte doit contenir 16 chiffres." })),
-  expiry: z.string().trim().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, { error: "Format attendu : MM/AA." }),
-  cvc: z.string().trim().regex(/^\d{3}$/, { error: "Le code doit contenir 3 chiffres." }),
+  method: z.enum(PAYMENT_METHODS, { error: "Choisissez un opérateur." }),
+  phone,
 });
 
 export const productSchema = z.object({
