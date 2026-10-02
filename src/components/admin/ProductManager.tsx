@@ -1,10 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { ProductThumb } from "@/components/ProductThumb";
 import { api, type ClientApiError } from "@/lib/client-api";
 import { formatPrice } from "@/lib/format";
 import type { AdminProduct } from "@/lib/types";
+
+const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
 type Editing = { mode: "create" } | { mode: "edit"; product: AdminProduct } | null;
 
@@ -80,7 +83,12 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
             <tbody className="divide-y divide-stone-200">
               {products.map((product) => (
                 <tr key={product.id} className={busyId === product.id ? "opacity-50" : undefined}>
-                  <td className="p-3 font-medium">{product.name}</td>
+                  <td className="p-3 font-medium">
+                    <div className="flex items-center gap-3">
+                      <ProductThumb src={product.image_url} name={product.name} size={40} />
+                      {product.name}
+                    </div>
+                  </td>
                   <td className="p-3 text-right tabular-nums">{formatPrice(product.price_cents)}</td>
                   <td className={`p-3 text-right tabular-nums ${product.stock === 0 ? "text-red-600" : ""}`}>
                     {product.stock}
@@ -139,19 +147,57 @@ function ProductForm({
 }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<ClientApiError | null>(null);
+  const [imageUrl, setImageUrl] = useState(product?.image_url ?? null);
+  const [file, setFile] = useState<File | null>(null);
+  const [inputKey, setInputKey] = useState(0);
+
+  // Aperçu local du fichier choisi ; l'URL temporaire est libérée dès qu'elle n'est plus affichée.
+  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+  useEffect(() => {
+    if (preview) return () => URL.revokeObjectURL(preview);
+  }, [preview]);
+
+  function onFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const selected = event.target.files?.[0] ?? null;
+    if (selected && selected.size > MAX_IMAGE_BYTES) {
+      setError({ message: "", fields: { image_url: ["L'image ne doit pas dépasser 2 Mo."] } });
+      event.target.value = "";
+      return;
+    }
+    setError(null);
+    setFile(selected);
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    setPending(true);
+    setError(null);
+
+    // L'image part d'abord : le produit n'enregistre que l'URL renvoyée par le serveur.
+    let image_url = imageUrl;
+    if (file) {
+      const upload = new FormData();
+      upload.set("file", file);
+      const uploaded = await api<{ url: string }>("/api/admin/uploads", "POST", upload);
+      if (uploaded.error) {
+        setError({ message: "", fields: { image_url: [uploaded.error.message] } });
+        setPending(false);
+        return;
+      }
+      image_url = uploaded.data.url;
+      setImageUrl(image_url);
+      setFile(null);
+    }
+
     const body = {
       name: form.get("name"),
       description: form.get("description"),
       price_cents: Number(form.get("price_cents")),
       stock: Number(form.get("stock")),
       is_active: form.get("is_active") === "on",
+      image_url,
     };
-    setPending(true);
-    setError(null);
 
     const result = product
       ? await api(`/api/admin/products/${product.id}`, "PATCH", body)
@@ -175,6 +221,38 @@ function ProductForm({
       <h2 className="font-semibold">{product ? `Modifier « ${product.name} »` : "Nouveau produit"}</h2>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="flex items-center gap-4 sm:col-span-2">
+          <ProductThumb src={preview ?? imageUrl} name={product?.name ?? "?"} size={80} />
+          <div className="flex flex-col gap-1.5 text-sm">
+            <label className="font-medium" htmlFor="product-image">
+              Image du produit
+            </label>
+            <input
+              // Changer la clé recrée le champ, donc le vide, après un retrait d'image.
+              key={inputKey}
+              id="product-image"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={onFileChange}
+              className="text-sm file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-stone-200"
+            />
+            <span className="text-stone-500">JPEG, PNG ou WebP, 2 Mo maximum.</span>
+            {(file || imageUrl) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFile(null);
+                  setImageUrl(null);
+                  setInputKey((key) => key + 1);
+                }}
+                className="self-start text-stone-500 hover:text-red-600"
+              >
+                Retirer l&apos;image
+              </button>
+            )}
+            {fieldError("image_url")}
+          </div>
+        </div>
         <label className="flex flex-col gap-1.5 text-sm font-medium sm:col-span-2">
           Nom
           <input name="name" defaultValue={product?.name} className={inputClass} />

@@ -58,6 +58,8 @@ export const productSchema = z.object({
   price_cents: z.int({ error: "Prix invalide." }).min(0, { error: "Le prix ne peut pas être négatif." }).max(100_000_000),
   stock: z.int({ error: "Stock invalide." }).min(0, { error: "Le stock ne peut pas être négatif." }).max(1_000_000),
   is_active: z.boolean(),
+  // L'appartenance de l'URL à notre bucket est vérifiée dans la route (assertOwnImage).
+  image_url: z.url({ error: "Image invalide." }).nullable(),
 });
 
 export const productUpdateSchema = productSchema.partial();
