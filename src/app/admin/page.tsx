@@ -28,11 +28,11 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex flex-col gap-10">
-      <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-lg border border-stone-200 bg-white p-4">
             <dt className="text-sm text-stone-500">{stat.label}</dt>
-            <dd className="mt-1 text-2xl font-semibold tabular-nums">{stat.value}</dd>
+            <dd className="mt-1 text-xl font-semibold tabular-nums sm:text-2xl">{stat.value}</dd>
           </div>
         ))}
       </dl>

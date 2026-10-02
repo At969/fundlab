@@ -37,7 +37,7 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
     <section
       aria-roledescription="carrousel"
       aria-label="À la une"
-      className="relative overflow-hidden rounded-3xl bg-emerald-900 text-white"
+      className="relative overflow-hidden rounded-2xl bg-emerald-900 text-white sm:rounded-3xl"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -69,7 +69,7 @@ export function HeroCarousel({ children }: { children: ReactNode }) {
       </div>
 
       {count > 1 && (
-        <div className="absolute inset-x-6 bottom-5 flex items-center justify-between sm:inset-x-12">
+        <div className="absolute inset-x-5 bottom-5 flex items-center justify-between sm:inset-x-12">
           <div className="flex items-center gap-2">
             {slides.map((_, dotIndex) => (
               <button

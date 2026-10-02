@@ -18,7 +18,8 @@ const primaryButton =
   "rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800 hover:shadow-lg active:translate-y-0";
 
 // Diapositive du bandeau ; la marge basse laisse la place aux commandes du carrousel.
-const slideClass = "grid h-full items-center gap-10 px-6 pt-12 pb-20 sm:px-12 md:grid-cols-[1.2fr_1fr] md:pt-16 md:pb-24";
+const slideClass =
+  "grid h-full items-center gap-8 px-5 pt-10 pb-20 *:min-w-0 sm:gap-10 sm:px-12 sm:pt-12 md:grid-cols-[1.2fr_1fr] md:pt-16 md:pb-24";
 
 const heroButton =
   "rounded-md bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-lg active:translate-y-0";
@@ -69,7 +70,7 @@ export default async function HomePage() {
   const featured = pickFeatured(products);
 
   return (
-    <div className="flex flex-col gap-20">
+    <div className="flex flex-col gap-14 sm:gap-20">
       <HeroCarousel>
         <div className={slideClass}>
           <div>
@@ -78,7 +79,7 @@ export default async function HomePage() {
             </p>
             <h1
               style={delay(0.1)}
-              className="animate-fade-up mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
+              className="animate-fade-up mt-4 text-3xl font-semibold tracking-tight text-balance sm:text-5xl"
             >
               Vos produits du quotidien, commandés en quelques clics.
             </h1>
@@ -102,16 +103,16 @@ export default async function HomePage() {
               {featured.map((product, index) => (
                 <li
                   key={product.id}
-                  // Léger décalage en escalier et entrée l'une après l'autre, uniquement décoratifs.
-                  style={{ marginLeft: `${index * 1.25}rem`, ...delay(0.3 + index * 0.15) }}
-                  className="animate-hero-card flex items-center gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
+                  // Décalage en escalier (grand écran seulement) et entrée l'une après l'autre, décoratifs.
+                  style={{ "--shift": `${index * 1.25}rem`, ...delay(0.3 + index * 0.15) } as CSSProperties}
+                  className="animate-hero-card flex items-center gap-3 sm:ml-(--shift) sm:gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
                 >
                   <ProductThumb src={product.image_urls[0] ?? null} name={product.name} size={56} />
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{product.name}</p>
                     <p className="text-sm text-stone-500">{product.stock > 0 ? "En stock" : "Rupture de stock"}</p>
                   </div>
-                  <p className="font-semibold tabular-nums">{formatPrice(product.price_cents)}</p>
+                  <p className="shrink-0 text-sm font-semibold tabular-nums sm:text-base">{formatPrice(product.price_cents)}</p>
                 </li>
               ))}
             </ul>
@@ -122,7 +123,7 @@ export default async function HomePage() {
           <div key={product.id} className={slideClass}>
             <div>
               <p className="text-sm font-medium uppercase tracking-widest text-emerald-300">À la une</p>
-              <h2 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+              <h2 className="mt-4 text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
                 <Link href={`/products/${product.id}`} className="hover:underline">
                   {product.name}
                 </Link>
@@ -231,7 +232,7 @@ export default async function HomePage() {
         </Reveal>
       </section>
 
-      <Reveal as="section" className="rounded-3xl bg-emerald-50 px-6 py-12 text-center sm:px-12">
+      <Reveal as="section" className="rounded-3xl bg-emerald-50 px-5 py-10 text-center sm:px-12 sm:py-12">
         <h2 className="text-2xl font-semibold tracking-tight text-balance">Prêt à remplir votre panier ?</h2>
         <p className="mx-auto mt-2 max-w-md text-stone-600">
           {user
