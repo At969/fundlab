@@ -105,11 +105,12 @@ export function ProductCatalog({ products, initialQuery, initialCategory }: Prop
       </div>
 
       {categories.length > 0 && (
-        // Sur téléphone, la rangée défile horizontalement plutôt que de s'empiler sur plusieurs lignes.
+        // Sur téléphone, la rangée défile horizontalement (au doigt, barre de défilement masquée)
+        // plutôt que de s'empiler sur plusieurs lignes.
         <div
           role="group"
           aria-label="Filtrer par catégorie"
-          className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0"
+          className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden"
         >
           <CategoryChip label="Tous" count={products.length} active={category === ""} onClick={() => update(query, "")} />
           {categories.map(([name, count]) => (
