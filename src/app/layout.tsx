@@ -9,8 +9,8 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: { default: "L'Épicerie", template: "%s · L'Épicerie" },
-  description: "Commandez en ligne les produits de votre épicerie de quartier.",
+  title: { default: "FUNDLABSHOP", template: "%s · FUNDLABSHOP" },
+  description: "Commandez en ligne vos produits du quotidien.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
