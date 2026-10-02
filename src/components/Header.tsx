@@ -17,7 +17,15 @@ export async function Header() {
           <CartLink />
           {user ? (
             <>
-              <span className="hidden text-stone-500 sm:inline">Bonjour, {user.name}</span>
+              <Link href="/orders" className="text-stone-600 hover:text-stone-900">
+                Mes commandes
+              </Link>
+              {user.role === "admin" && (
+                <Link href="/admin" className="font-medium text-emerald-700 hover:text-emerald-900">
+                  Administration
+                </Link>
+              )}
+              <span className="hidden text-stone-500 md:inline">Bonjour, {user.name}</span>
               <LogoutButton />
             </>
           ) : (
