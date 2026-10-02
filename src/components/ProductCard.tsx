@@ -18,15 +18,16 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <li className="group flex flex-col overflow-hidden rounded-lg border border-stone-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-      {/* Lien décoratif : le nom du produit, juste en dessous, porte déjà le même lien. */}
-      <Link href={href} tabIndex={-1} aria-hidden className="relative block aspect-[4/3] overflow-hidden bg-stone-100">
+      {/* Photo affichée en entier (object-contain), jamais recadrée. Lien décoratif : le nom du
+          produit, juste en dessous, porte déjà le même lien. */}
+      <Link href={href} tabIndex={-1} aria-hidden className="relative block aspect-square overflow-hidden border-b border-stone-100 bg-white">
         {image ? (
           <Image
             src={image}
             alt=""
             fill
             sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition duration-500 group-hover:scale-105"
+            className="object-contain p-4 transition duration-500 group-hover:scale-105"
           />
         ) : (
           <span className="flex h-full items-center justify-center bg-accent-50 text-5xl font-semibold text-accent-700/40">

@@ -25,7 +25,7 @@ export function ProductThumb({ src, name, size }: { src: string | null; name: st
       height={size}
       unoptimized={src.startsWith("blob:")}
       style={style}
-      className="shrink-0 rounded-md object-cover"
+      className="shrink-0 rounded-md bg-white object-contain"
     />
   );
 }

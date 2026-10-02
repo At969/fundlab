@@ -46,7 +46,7 @@ export function ProductGallery({ images, name }: { images: string[]; name: strin
                   index === selected ? "border-accent-500" : "border-transparent opacity-70 hover:opacity-100"
                 }`}
               >
-                <Image src={url} alt="" fill sizes="64px" className="object-cover" />
+                <Image src={url} alt="" fill sizes="64px" className="object-contain p-0.5" />
               </button>
             </li>
           ))}

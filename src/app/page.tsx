@@ -147,7 +147,7 @@ export default async function HomePage() {
                   alt={product.name}
                   fill
                   sizes="(min-width: 768px) 384px, 100vw"
-                  className="object-cover"
+                  className="bg-white object-contain p-4"
                 />
               ) : (
                 <span
