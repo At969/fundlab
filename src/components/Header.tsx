@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/dal";
 import { CartLink } from "@/components/CartLink";
+import { Logo } from "@/components/Logo";
 import { LogoutButton } from "@/components/LogoutButton";
 import { MobileMenu } from "@/components/MobileMenu";
 
@@ -20,8 +21,8 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-20 border-b border-stone-200 bg-white/85 backdrop-blur">
       <div className="relative mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-3 px-4">
-        <Link href={isAdmin ? "/admin" : "/"} className="font-semibold tracking-tight">
-          FUNDLABSHOP
+        <Link href={isAdmin ? "/admin" : "/"} aria-label="FUNDLABSHOP, accueil" className="shrink-0">
+          <Logo className="h-8 w-auto" priority />
         </Link>
 
         <div className="flex items-center gap-4 text-sm">
