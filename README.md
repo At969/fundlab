@@ -24,8 +24,8 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 **Administration (compte administrateur)**
 
 - Tableau de bord : chiffre d'affaires encaissé, commandes à traiter, clients inscrits, stock faible.
-- Produits : création, modification, catégorie (facultative), jusqu'à six images par produit, masquage, suppression.
-- Catégories : création, renommage, suppression, avec le nombre de produits de chacune. Supprimer une catégorie ne supprime aucun produit.
+- Produits : création, modification, catégorie (facultative, choisie dans la liste des catégories), jusqu'à six images par produit, masquage, suppression.
+- Catégories : onglet dédié pour les créer, les renommer et les supprimer, avec le nombre de produits de chacune. Renommer une catégorie s'applique aussitôt à tous ses produits ; en supprimer une ne supprime aucun produit, ils passent « sans catégorie ». Deux catégories ne peuvent pas porter le même nom, à la casse près.
 - Commandes : liste complète avec le client et l'adresse de livraison, changement de statut.
 - Utilisateurs : liste et changement de rôle.
 
@@ -77,6 +77,18 @@ scripts/                   création d'un administrateur, création du bucket d'
 
 Les pages sont rendues côté serveur et lisent la base directement via `src/lib`. Les composants interactifs (panier, formulaires, administration) passent par les routes API.
 
+### Modèle de données
+
+| Table | Contenu |
+|---|---|
+| `users` | comptes : e-mail, mot de passe haché, rôle (`customer` ou `admin`) |
+| `categories` | catégories de produits, au nom unique |
+| `products` | produits : prix, stock, images, visibilité, catégorie facultative (`category_id`) |
+| `orders` | commandes : client, statut, total, livraison, opérateur de paiement |
+| `order_items` | lignes de commande, avec le nom et le prix copiés au moment de l'achat |
+
+Supprimer une catégorie vide le lien de ses produits (`on delete set null`) ; supprimer un produit ne modifie pas les commandes passées.
+
 ### API
 
 | Route | Méthodes | Accès |
@@ -109,6 +121,7 @@ Toutes les erreurs ont le même format :
 - **Cloisonnement** : un client ne peut lire ou payer que ses propres commandes (celle d'un autre renvoie 404).
 - **Paiement** : le numéro mobile money est seulement validé ; seul l'opérateur choisi est enregistré sur la commande. Une commande ne peut être payée qu'une fois.
 - **Images** : type vérifié sur le contenu du fichier (JPEG, PNG, WebP), 2 Mo maximum, nom généré par le serveur. Un produit n'accepte que des images du bucket du projet, supprimées du stockage quand elles ne servent plus.
+- **Intégrité** : l'unicité des noms de catégorie et le rattachement d'un produit à une catégorie existante sont garantis par la base (index unique, clé étrangère), pas seulement par le code.
 - **Base** : RLS activé sans règle sur toutes les tables ; seule la clé `service_role`, présente uniquement côté serveur, y accède.
 
 ## Installation locale
@@ -154,6 +167,8 @@ Le dépôt est relié à Vercel : chaque push sur `main` déclenche un déploiem
 - Annuler une commande ne remet pas les articles en stock.
 - L'administrateur peut passer une commande d'un statut à n'importe quel autre, sans ordre imposé.
 - La recherche et le filtre par catégorie s'appliquent dans le navigateur aux produits déjà chargés : adaptés à un petit catalogue, ils demanderaient une recherche côté serveur et une pagination au-delà.
+- Un produit n'a qu'une seule catégorie, et les catégories ne sont pas hiérarchisées (pas de sous-catégories).
+- Dans l'administration, le compteur d'une catégorie inclut les produits masqués ; la boutique, elle, n'affiche que les catégories ayant au moins un produit visible.
 - Les numéros de téléphone sont validés au seul format béninois.
 - Pas de tests automatisés ; les routes ont été vérifiées manuellement, et l'affichage mobile dans un navigateur d'ordinateur, pas sur un téléphone réel.
 - Les montants sont stockés en francs CFA entiers dans des colonnes nommées `*_cents` (plus petite unité de la devise).
