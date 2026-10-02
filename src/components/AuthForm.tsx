@@ -83,6 +83,15 @@ export function AuthForm({ mode }: { mode: Mode }) {
           hint={mode === "register" ? "8 caractères minimum." : undefined}
           errors={fields.password}
         />
+        {mode === "register" && (
+          <Field
+            label="Confirmer le mot de passe"
+            name="passwordConfirm"
+            type="password"
+            autoComplete="new-password"
+            errors={fields.passwordConfirm}
+          />
+        )}
 
         {message && (
           <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
