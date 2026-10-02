@@ -14,15 +14,15 @@ export function ProductCard({ product }: { product: Product }) {
   const maxReached = inCart >= product.stock;
 
   return (
-    <li className="flex flex-col overflow-hidden rounded-lg border border-stone-200 bg-white">
+    <li className="group flex flex-col overflow-hidden rounded-lg border border-stone-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       {product.image_url ? (
-        <div className="relative aspect-[4/3] bg-stone-100">
+        <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
           <Image
             src={product.image_url}
             alt={product.name}
             fill
             sizes="(min-width: 1024px) 320px, (min-width: 640px) 50vw, 100vw"
-            className="object-cover"
+            className="object-cover transition duration-500 group-hover:scale-105"
           />
         </div>
       ) : (
@@ -49,7 +49,7 @@ export function ProductCard({ product }: { product: Product }) {
             type="button"
             onClick={() => add(product)}
             disabled={soldOut || maxReached}
-            className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-stone-300"
+            className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-800 active:scale-95 disabled:cursor-not-allowed disabled:bg-stone-300"
           >
             {inCart > 0 ? `Ajouter (${inCart})` : "Ajouter"}
           </button>

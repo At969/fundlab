@@ -10,7 +10,7 @@ export async function Header() {
   const isAdmin = user?.role === "admin";
 
   return (
-    <header className="border-b border-stone-200 bg-white">
+    <header className="sticky top-0 z-20 border-b border-stone-200 bg-white/85 backdrop-blur">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-4 px-4">
         <Link href={isAdmin ? "/admin" : "/"} className="font-semibold tracking-tight">
           FUNDLABSHOP

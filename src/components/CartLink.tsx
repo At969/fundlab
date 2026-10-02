@@ -11,7 +11,11 @@ export function CartLink() {
     <Link href="/cart" className="flex items-center gap-1.5 text-stone-600 hover:text-stone-900">
       Panier
       {count > 0 && (
-        <span className="rounded-full bg-emerald-700 px-2 py-0.5 text-xs font-medium text-white tabular-nums">
+        <span
+          // La clé relance la petite animation à chaque changement de quantité.
+          key={count}
+          className="animate-pop rounded-full bg-emerald-700 px-2 py-0.5 text-xs font-medium text-white tabular-nums"
+        >
           {count}
         </span>
       )}

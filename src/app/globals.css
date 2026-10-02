@@ -8,3 +8,118 @@ body {
   background: var(--color-stone-50);
   color: var(--color-stone-900);
 }
+
+/* ---------- Animations ---------- */
+
+:root {
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(2.5rem);
+  }
+}
+
+@keyframes float {
+  to {
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes pop {
+  50% {
+    scale: 1.35;
+  }
+}
+
+/* Entrée au chargement ; le délai se règle avec la variable --delay. */
+.animate-fade-up {
+  animation: fade-up 0.7s var(--ease-out) var(--delay, 0s) both;
+}
+
+/* Entrée latérale puis léger flottement. Le flottement anime `translate`,
+   l'entrée anime `transform` : les deux ne se marchent pas dessus. */
+.animate-hero-card {
+  animation:
+    slide-in 0.8s var(--ease-out) var(--delay, 0s) both,
+    float 4s ease-in-out calc(var(--delay, 0s) + 0.8s) infinite alternate;
+}
+
+.animate-pop {
+  animation: pop 0.3s ease-out;
+}
+
+/* Apparition au défilement : le composant Reveal ajoute .is-visible quand le bloc entre à l'écran. */
+.reveal {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 0.7s var(--ease-out),
+    transform 0.7s var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Variante en cascade : chaque enfant direct apparaît à la suite du précédent.
+   `translate` et `box-shadow` sont listés pour que les effets de survol des cartes restent fluides. */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 0.6s var(--ease-out) var(--stagger, 0s),
+    transform 0.6s var(--ease-out) var(--stagger, 0s),
+    translate 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.reveal-stagger.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-stagger > :nth-child(2) {
+  --stagger: 0.1s;
+}
+.reveal-stagger > :nth-child(3) {
+  --stagger: 0.2s;
+}
+.reveal-stagger > :nth-child(4) {
+  --stagger: 0.3s;
+}
+
+/* Sans JavaScript, rien ne doit rester invisible. */
+@media (scripting: none) {
+  .reveal,
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Respect du réglage système « réduire les animations ». */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-hero-card,
+  .animate-pop {
+    animation: none;
+  }
+
+  .reveal,
+  .reveal-stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

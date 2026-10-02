@@ -1,6 +1,8 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductThumb } from "@/components/ProductThumb";
+import { Reveal } from "@/components/Reveal";
 import { getCurrentUser } from "@/lib/dal";
 import { formatPrice } from "@/lib/format";
 import { redirectAdminToDashboard } from "@/lib/guards";
@@ -10,7 +12,10 @@ import type { Product } from "@/lib/types";
 const FEATURED_COUNT = 3;
 
 const primaryButton =
-  "rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800";
+  "rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-800 hover:shadow-lg active:translate-y-0";
+
+// Délai d'une animation d'entrée (lu par les classes animate-* de globals.css).
+const delay = (seconds: number) => ({ "--delay": `${seconds}s` }) as CSSProperties;
 
 // Mise en avant : les produits en stock d'abord, et parmi eux ceux qui ont une photo.
 function pickFeatured(products: Product[]) {
@@ -56,17 +61,17 @@ export default async function HomePage() {
     <div className="flex flex-col gap-20">
       <section className="grid items-center gap-10 overflow-hidden rounded-3xl bg-emerald-900 px-6 py-12 text-white sm:px-12 md:grid-cols-[1.2fr_1fr] md:py-16">
         <div>
-          <p className="text-sm font-medium uppercase tracking-widest text-emerald-300">Votre boutique en ligne</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+          <p className="animate-fade-up text-sm font-medium uppercase tracking-widest text-emerald-300">Votre boutique en ligne</p>
+          <h1 style={delay(0.1)} className="animate-fade-up mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
             Vos produits du quotidien, commandés en quelques clics.
           </h1>
-          <p className="mt-5 max-w-md text-lg text-emerald-100/90">
+          <p style={delay(0.2)} className="animate-fade-up mt-5 max-w-md text-lg text-emerald-100/90">
             Remplissez votre panier, validez votre commande et suivez-la jusqu&apos;à la livraison.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div style={delay(0.3)} className="animate-fade-up mt-8 flex flex-wrap items-center gap-4">
             <Link
               href="/products"
-              className="rounded-md bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:bg-emerald-50"
+              className="rounded-md bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:bg-emerald-50 hover:shadow-lg active:translate-y-0"
             >
               Voir les produits
             </Link>
@@ -83,9 +88,9 @@ export default async function HomePage() {
             {featured.map((product, index) => (
               <li
                 key={product.id}
-                // Léger décalage en escalier, uniquement décoratif.
-                style={{ marginLeft: `${index * 1.25}rem` }}
-                className="flex items-center gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
+                // Léger décalage en escalier et entrée l'une après l'autre, uniquement décoratifs.
+                style={{ marginLeft: `${index * 1.25}rem`, ...delay(0.3 + index * 0.15) }}
+                className="animate-hero-card flex items-center gap-4 rounded-xl bg-white p-3 text-stone-900 shadow-lg shadow-emerald-950/30"
               >
                 <ProductThumb src={product.image_url} name={product.name} size={56} />
                 <div className="min-w-0 flex-1">
@@ -115,11 +120,11 @@ export default async function HomePage() {
         {featured.length === 0 ? (
           <p className="mt-6 text-stone-600">Aucun produit n&apos;est disponible pour le moment.</p>
         ) : (
-          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal as="ul" stagger className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
-          </ul>
+          </Reveal>
         )}
       </section>
 
@@ -127,9 +132,12 @@ export default async function HomePage() {
         <h2 id="advantages-title" className="text-2xl font-semibold tracking-tight">
           Pourquoi commander ici
         </h2>
-        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal as="ul" stagger className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {ADVANTAGES.map((advantage) => (
-            <li key={advantage.title} className="rounded-xl border border-stone-200 bg-white p-5">
+            <li
+              key={advantage.title}
+              className="rounded-xl border border-stone-200 bg-white p-5 hover:-translate-y-1 hover:shadow-lg"
+            >
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
                 <svg
                   aria-hidden
@@ -148,14 +156,14 @@ export default async function HomePage() {
               <p className="mt-1 text-sm text-stone-600">{advantage.text}</p>
             </li>
           ))}
-        </ul>
+        </Reveal>
       </section>
 
       <section aria-labelledby="steps-title">
         <h2 id="steps-title" className="text-2xl font-semibold tracking-tight">
           Comment ça marche
         </h2>
-        <ol className="mt-6 grid gap-6 sm:grid-cols-3">
+        <Reveal as="ol" stagger className="mt-6 grid gap-6 sm:grid-cols-3">
           {STEPS.map((step, index) => (
             <li key={step.title} className="border-t-2 border-emerald-700 pt-4">
               <p className="text-sm font-semibold text-emerald-700 tabular-nums">Étape {index + 1}</p>
@@ -163,10 +171,10 @@ export default async function HomePage() {
               <p className="mt-1 text-stone-600">{step.text}</p>
             </li>
           ))}
-        </ol>
+        </Reveal>
       </section>
 
-      <section className="rounded-3xl bg-emerald-50 px-6 py-12 text-center sm:px-12">
+      <Reveal as="section" className="rounded-3xl bg-emerald-50 px-6 py-12 text-center sm:px-12">
         <h2 className="text-2xl font-semibold tracking-tight text-balance">Prêt à remplir votre panier ?</h2>
         <p className="mx-auto mt-2 max-w-md text-stone-600">
           {user
@@ -183,7 +191,7 @@ export default async function HomePage() {
             </Link>
           )}
         </div>
-      </section>
+      </Reveal>
     </div>
   );
 }
