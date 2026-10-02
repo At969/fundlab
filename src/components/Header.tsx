@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/dal";
+import { CartLink } from "@/components/CartLink";
 import { LogoutButton } from "@/components/LogoutButton";
 
 export async function Header() {
@@ -9,10 +10,11 @@ export async function Header() {
     <header className="border-b border-stone-200 bg-white">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-4 px-4">
         <Link href="/" className="font-semibold tracking-tight">
-          L&apos;Épicerie
+          FUNDLABSHOP
         </Link>
 
         <nav className="flex items-center gap-4 text-sm">
+          <CartLink />
           {user ? (
             <>
               <span className="hidden text-stone-500 sm:inline">Bonjour, {user.name}</span>
