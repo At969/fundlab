@@ -11,8 +11,9 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 
 - Page d'accueil : carrousel (présentation de la boutique, puis produits à la une), sélection de produits, avantages et étapes de commande.
 - Catalogue chargé depuis la base, avec photo, prix et stock.
-- Recherche instantanée dans le catalogue, insensible aux accents et à la casse, et filtre par catégorie ; les deux sont repris dans l'URL (`/products?q=…&categorie=…`).
-- Fiche détaillée par produit, avec galerie de photos.
+- Recherche instantanée dans le catalogue, insensible aux accents et à la casse ; elle porte sur le nom, la description et la catégorie.
+- Filtre par catégorie : un bouton par catégorie avec son nombre de produits, combinable avec la recherche. Recherche et catégorie sont reprises dans l'URL (`/products?q=…&categorie=…`).
+- Fiche détaillée par produit, avec galerie de photos et lien vers les autres produits de sa catégorie.
 - Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
 - Panier flottant en bas d'écran et icône dans l'en-tête, avec le nombre d'articles et le montant.
 - Inscription (avec confirmation du mot de passe), connexion et déconnexion.
@@ -23,7 +24,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 **Administration (compte administrateur)**
 
 - Tableau de bord : chiffre d'affaires encaissé, commandes à traiter, clients inscrits, stock faible.
-- Produits : création, modification, catégorie, jusqu'à six images par produit, masquage, suppression.
+- Produits : création, modification, catégorie (facultative, avec suggestion des catégories déjà utilisées), jusqu'à six images par produit, masquage, suppression.
 - Commandes : liste complète avec le client et l'adresse de livraison, changement de statut.
 - Utilisateurs : liste et changement de rôle.
 
@@ -31,7 +32,7 @@ Les deux espaces sont étanches : un administrateur gère la plateforme et n'a n
 
 **Interface**
 
-- Adaptée aux téléphones : menu déroulant, deux produits par ligne, tableaux de l'administration affichés en cartes.
+- Adaptée aux téléphones : menu déroulant, deux produits par ligne, rangée de catégories défilante, tableaux de l'administration affichés en cartes.
 - Animations d'entrée, d'apparition au défilement et de survol, désactivées pour les visiteurs qui ont choisi de réduire les animations.
 - Couleurs reprises du logo FUND.lab (bleu marine et cyan).
 
@@ -150,7 +151,8 @@ Le dépôt est relié à Vercel : chaque push sur `main` déclenche un déploiem
 - Le paiement mobile money est une simulation : aucun opérateur n'est appelé.
 - Annuler une commande ne remet pas les articles en stock.
 - L'administrateur peut passer une commande d'un statut à n'importe quel autre, sans ordre imposé.
-- La recherche filtre dans le navigateur les produits déjà chargés : adaptée à un petit catalogue, elle demanderait une recherche côté serveur et une pagination au-delà.
+- La recherche et le filtre par catégorie s'appliquent dans le navigateur aux produits déjà chargés : adaptés à un petit catalogue, ils demanderaient une recherche côté serveur et une pagination au-delà.
+- Une catégorie est un simple libellé porté par les produits : il n'y a pas de page pour les gérer, et en renommer une revient à modifier les produits concernés.
 - Les numéros de téléphone sont validés au seul format béninois.
 - Pas de tests automatisés ; les routes ont été vérifiées manuellement, et l'affichage mobile dans un navigateur d'ordinateur, pas sur un téléphone réel.
 - Les montants sont stockés en francs CFA entiers dans des colonnes nommées `*_cents` (plus petite unité de la devise).
