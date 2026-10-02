@@ -25,6 +25,14 @@ export async function requireUser(): Promise<User> {
   return user;
 }
 
+// Panier, commandes et paiement sont réservés aux clients : un administrateur
+// gère la plateforme mais n'achète pas avec son compte.
+export async function requireCustomer(): Promise<User> {
+  const user = await requireUser();
+  if (user.role !== "customer") throw new ApiError(403, "FORBIDDEN", "Action réservée aux clients.");
+  return user;
+}
+
 export async function requireAdmin(): Promise<User> {
   const user = await requireUser();
   if (user.role !== "admin") throw new ApiError(403, "FORBIDDEN", "Accès réservé à l'administrateur.");

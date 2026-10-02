@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PayForm } from "@/components/PayForm";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatPrice, shortId } from "@/lib/format";
-import { requireUserPage } from "@/lib/guards";
+import { requireCustomerPage } from "@/lib/guards";
 import { getOrderForUser } from "@/lib/orders";
 import { idSchema } from "@/lib/validation";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: "Détail de la commande" };
 
 export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const user = await requireUserPage(`/orders/${id}`);
+  const user = await requireCustomerPage(`/orders/${id}`);
   if (!idSchema.safeParse(id).success) notFound();
 
   const order = await getOrderForUser(id, user.id);

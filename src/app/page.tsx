@@ -1,7 +1,9 @@
 import { ProductCard } from "@/components/ProductCard";
+import { redirectAdminToDashboard } from "@/lib/guards";
 import { listActiveProducts } from "@/lib/products";
 
 export default async function HomePage() {
+  await redirectAdminToDashboard();
   const products = await listActiveProducts();
 
   return (

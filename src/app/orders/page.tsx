@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatPrice, shortId } from "@/lib/format";
-import { requireUserPage } from "@/lib/guards";
+import { requireCustomerPage } from "@/lib/guards";
 import { listOrdersForUser } from "@/lib/orders";
 
 export const metadata: Metadata = { title: "Mes commandes" };
 
 export default async function OrdersPage() {
-  const user = await requireUserPage("/orders");
+  const user = await requireCustomerPage("/orders");
   const orders = await listOrdersForUser(user.id);
 
   return (

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { CheckoutView } from "@/components/CheckoutView";
-import { requireUserPage } from "@/lib/guards";
+import { requireCustomerPage } from "@/lib/guards";
 
 export const metadata: Metadata = { title: "Validation de la commande" };
 
 export default async function CheckoutPage() {
-  await requireUserPage("/checkout");
+  await requireCustomerPage("/checkout");
 
   return (
     <div>

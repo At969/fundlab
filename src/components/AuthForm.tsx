@@ -53,7 +53,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
         body: JSON.stringify(Object.fromEntries(form)),
       });
       if (response.ok) {
-        router.replace(next);
+        const { user } = await response.json();
+        router.replace(user.role === "admin" ? "/admin" : next);
         router.refresh();
         return;
       }
