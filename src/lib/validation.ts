@@ -30,12 +30,18 @@ export const loginSchema = z.object({
 
 export const idSchema = z.uuid({ error: "Identifiant invalide." });
 
-// Numéro de téléphone : espaces, points et tirets tolérés à la saisie, puis retirés.
-// Les longueurs varient selon les pays de la zone (8 à 10 chiffres, indicatif en plus).
+// Numéro béninois : 10 chiffres commençant par 01, indicatif +229 ou 00229 facultatif.
+// Espaces, points et tirets sont tolérés à la saisie ; le numéro est enregistré sous la
+// forme +22901XXXXXXXX.
 const phone = z
   .string()
   .transform((value) => value.replace(/[\s.-]/g, ""))
-  .pipe(z.string().regex(/^\+?\d{8,15}$/, { error: "Numéro de téléphone invalide." }));
+  .pipe(
+    z
+      .string()
+      .regex(/^(?:\+229|00229)?01\d{8}$/, { error: "Numéro invalide : 10 chiffres commençant par 01." })
+      .transform((value) => `+229${value.slice(-10)}`),
+  );
 
 export const deliverySchema = z.object(
   {

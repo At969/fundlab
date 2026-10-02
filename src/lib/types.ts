@@ -40,15 +40,13 @@ export type OrderItem = {
   quantity: number;
 };
 
-// Opérateurs de mobile money proposés au paiement (simulé).
-export const PAYMENT_METHODS = ["mtn", "moov", "orange", "wave"] as const;
+// Opérateurs de mobile money proposés au paiement (simulé). La boutique vise le Bénin.
+export const PAYMENT_METHODS = ["mtn", "moov"] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   mtn: "MTN Mobile Money",
   moov: "Moov Money",
-  orange: "Orange Money",
-  wave: "Wave",
 };
 
 export type Delivery = {

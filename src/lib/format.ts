@@ -4,7 +4,7 @@ const priceFormatter = new Intl.NumberFormat("fr-FR", { style: "currency", curre
 const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "long",
   timeStyle: "short",
-  timeZone: "Africa/Abidjan",
+  timeZone: "Africa/Porto-Novo",
 });
 
 // Les montants sont stockés dans la plus petite unité de la devise.

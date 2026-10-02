@@ -15,7 +15,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 - Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
 - Inscription, connexion et déconnexion.
 - Validation de commande avec les informations de livraison (destinataire, téléphone, adresse, ville).
-- Paiement par mobile money simulé (MTN, Moov, Orange, Wave) : aucun compte n'est débité, le numéro n'est pas enregistré.
+- Paiement par mobile money simulé (MTN Mobile Money, Moov Money) : aucun compte n'est débité, le numéro n'est pas enregistré.
 - Historique des commandes avec leur statut.
 
 **Administration (compte administrateur)**
