@@ -24,7 +24,8 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 **Administration (compte administrateur)**
 
 - Tableau de bord : chiffre d'affaires encaissé, commandes à traiter, clients inscrits, stock faible.
-- Produits : création, modification, catégorie (facultative, avec suggestion des catégories déjà utilisées), jusqu'à six images par produit, masquage, suppression.
+- Produits : création, modification, catégorie (facultative), jusqu'à six images par produit, masquage, suppression.
+- Catégories : création, renommage, suppression, avec le nombre de produits de chacune. Supprimer une catégorie ne supprime aucun produit.
 - Commandes : liste complète avec le client et l'adresse de livraison, changement de statut.
 - Utilisateurs : liste et changement de rôle.
 
@@ -86,6 +87,7 @@ Les pages sont rendues côté serveur et lisent la base directement via `src/lib
 | `/api/orders/[id]` | GET | client (ses commandes uniquement) |
 | `/api/orders/[id]/pay` | POST | client |
 | `/api/admin/products`, `/api/admin/products/[id]` | GET, POST, PATCH, DELETE | administrateur |
+| `/api/admin/categories`, `/api/admin/categories/[id]` | GET, POST, PATCH, DELETE | administrateur |
 | `/api/admin/uploads` | POST | administrateur |
 | `/api/admin/orders`, `/api/admin/orders/[id]` | GET, PATCH | administrateur |
 | `/api/admin/users`, `/api/admin/users/[id]` | GET, PATCH | administrateur |
@@ -119,7 +121,7 @@ Prérequis : Node.js 20.9 ou plus récent, et un projet [Supabase](https://supab
    npm install
    ```
 
-2. Dans l'éditeur SQL de Supabase, exécuter `supabase/schema.sql`, puis `supabase/seed.sql` (douze produits de démonstration). Le dossier `supabase/migrations/` ne sert qu'à mettre à niveau une base créée avec une version antérieure du schéma.
+2. Dans l'éditeur SQL de Supabase, exécuter `supabase/schema.sql`, puis `supabase/seed.sql` (quatre catégories et douze produits de démonstration). Le dossier `supabase/migrations/` ne sert qu'à mettre à niveau une base créée avec une version antérieure du schéma.
 
 3. Copier `.env.example` en `.env.local` et renseigner les trois variables :
 
@@ -152,7 +154,6 @@ Le dépôt est relié à Vercel : chaque push sur `main` déclenche un déploiem
 - Annuler une commande ne remet pas les articles en stock.
 - L'administrateur peut passer une commande d'un statut à n'importe quel autre, sans ordre imposé.
 - La recherche et le filtre par catégorie s'appliquent dans le navigateur aux produits déjà chargés : adaptés à un petit catalogue, ils demanderaient une recherche côté serveur et une pagination au-delà.
-- Une catégorie est un simple libellé porté par les produits : il n'y a pas de page pour les gérer, et en renommer une revient à modifier les produits concernés.
 - Les numéros de téléphone sont validés au seul format béninois.
 - Pas de tests automatisés ; les routes ont été vérifiées manuellement, et l'affichage mobile dans un navigateur d'ordinateur, pas sur un téléphone réel.
 - Les montants sont stockés en francs CFA entiers dans des colonnes nommées `*_cents` (plus petite unité de la devise).

@@ -18,12 +18,22 @@ create table users (
   created_at timestamptz not null default now()
 );
 
+-- Catégories gérées par l'administrateur ; elles servent à filtrer le catalogue.
+create table categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  created_at timestamptz not null default now()
+);
+
+-- Deux catégories ne peuvent pas porter le même nom, à la casse près.
+create unique index categories_name_key on categories (lower(name));
+
 create table products (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   description text not null default '',
-  -- Facultative : sert à filtrer le catalogue.
-  category text,
+  -- Facultative. Si la catégorie est supprimée, le produit devient « sans catégorie ».
+  category_id uuid references categories (id) on delete set null,
   price_cents integer not null check (price_cents >= 0),
   -- Liste ordonnée d'URL ; la première est l'image principale.
   image_urls text[] not null default '{}',
@@ -48,6 +58,8 @@ create table orders (
   delivery_notes text
 );
 
+create index products_category_id_idx on products (category_id);
+
 create index orders_user_id_idx on orders (user_id, created_at desc);
 
 -- Le nom et le prix sont copiés au moment de la commande :
@@ -66,6 +78,7 @@ create index order_items_order_id_idx on order_items (order_id);
 -- L'application n'accède à la base que depuis le serveur avec la clé service_role.
 -- RLS activé sans aucune policy : la clé publique (anon) ne peut rien lire ni écrire.
 alter table users enable row level security;
+alter table categories enable row level security;
 alter table products enable row level security;
 alter table orders enable row level security;
 alter table order_items enable row level security;

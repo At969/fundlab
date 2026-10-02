@@ -11,7 +11,7 @@ export type Product = {
   id: string;
   name: string;
   description: string;
-  /** Facultative : un produit sans catégorie n'apparaît que sous « Tous ». */
+  /** Nom de la catégorie. Facultative : un produit sans catégorie n'apparaît que sous « Tous ». */
   category: string | null;
   price_cents: number;
   /** Liste ordonnée ; la première image est la principale. */
@@ -22,7 +22,10 @@ export type Product = {
 export const MAX_PRODUCT_IMAGES = 6;
 export const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 
-export type AdminProduct = Product & { is_active: boolean };
+export type AdminProduct = Product & { is_active: boolean; category_id: string | null };
+
+export type Category = { id: string; name: string };
+export type AdminCategory = Category & { product_count: number };
 
 export const ORDER_STATUSES = ["pending", "paid", "preparing", "delivered", "cancelled"] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];

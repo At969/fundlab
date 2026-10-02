@@ -1,11 +1,33 @@
 import "server-only";
+import { ApiError } from "@/lib/api";
 import { db } from "@/lib/supabase";
 import type { AdminProduct, Product } from "@/lib/types";
 
-const PUBLIC_COLUMNS = "id, name, description, category, price_cents, image_urls, stock";
-const ADMIN_COLUMNS = `${PUBLIC_COLUMNS}, is_active`;
+// Une seule chaîne littérale par requête : le client Supabase en déduit le type des lignes.
+const PUBLIC_COLUMNS = "id, name, description, price_cents, image_urls, stock, categories(name)";
+const ADMIN_COLUMNS = "id, name, description, price_cents, image_urls, stock, categories(name), category_id, is_active";
 
-type ProductInput = Omit<AdminProduct, "id">;
+const FOREIGN_KEY_VIOLATION = "23503";
+
+type ProductInput = Omit<AdminProduct, "id" | "category">;
+
+// La catégorie arrive de la base comme une ligne liée ({ name }) ; l'application
+// ne manipule que son nom.
+type Joined = { categories: { name: string } | { name: string }[] | null };
+
+function withCategory<Row extends Joined>(row: Row): Omit<Row, "categories"> & { category: string | null } {
+  const { categories, ...rest } = row;
+  const linked = Array.isArray(categories) ? categories[0] : categories;
+  return { ...rest, category: linked?.name ?? null };
+}
+
+// Une catégorie supprimée entre l'affichage du formulaire et son envoi : erreur de saisie, pas une panne.
+function assertKnownCategory(error: { code?: string } | null) {
+  if (error?.code === FOREIGN_KEY_VIOLATION) {
+    const message = "Cette catégorie n'existe plus.";
+    throw new ApiError(422, "VALIDATION_ERROR", message, { category_id: [message] });
+  }
+}
 
 export async function listActiveProducts(): Promise<Product[]> {
   const { data, error } = await db
@@ -15,7 +37,7 @@ export async function listActiveProducts(): Promise<Product[]> {
     .order("name");
 
   if (error) throw new Error(`Lecture des produits impossible : ${error.message}`);
-  return data;
+  return data.map(withCategory);
 }
 
 export async function getActiveProduct(id: string): Promise<Product | null> {
@@ -27,28 +49,29 @@ export async function getActiveProduct(id: string): Promise<Product | null> {
     .maybeSingle();
 
   if (error) throw new Error(`Lecture du produit impossible : ${error.message}`);
-  return data;
+  return data && withCategory(data);
 }
 
 export async function listAllProducts(): Promise<AdminProduct[]> {
   const { data, error } = await db.from("products").select(ADMIN_COLUMNS).order("name");
 
   if (error) throw new Error(`Lecture des produits impossible : ${error.message}`);
-  return data;
+  return data.map(withCategory);
 }
 
 export async function getProduct(id: string): Promise<AdminProduct | null> {
   const { data, error } = await db.from("products").select(ADMIN_COLUMNS).eq("id", id).maybeSingle();
 
   if (error) throw new Error(`Lecture du produit impossible : ${error.message}`);
-  return data;
+  return data && withCategory(data);
 }
 
 export async function createProduct(input: ProductInput): Promise<AdminProduct> {
   const { data, error } = await db.from("products").insert(input).select(ADMIN_COLUMNS).single();
 
+  assertKnownCategory(error);
   if (error) throw new Error(`Création du produit impossible : ${error.message}`);
-  return data;
+  return withCategory(data);
 }
 
 export async function updateProduct(id: string, input: Partial<ProductInput>): Promise<AdminProduct | null> {
@@ -59,8 +82,9 @@ export async function updateProduct(id: string, input: Partial<ProductInput>): P
     .select(ADMIN_COLUMNS)
     .maybeSingle();
 
+  assertKnownCategory(error);
   if (error) throw new Error(`Mise à jour du produit impossible : ${error.message}`);
-  return data;
+  return data && withCategory(data);
 }
 
 // Les commandes passées gardent le nom et le prix du produit (copiés dans order_items),
@@ -69,5 +93,5 @@ export async function deleteProduct(id: string): Promise<AdminProduct | null> {
   const { data, error } = await db.from("products").delete().eq("id", id).select(ADMIN_COLUMNS).maybeSingle();
 
   if (error) throw new Error(`Suppression du produit impossible : ${error.message}`);
-  return data;
+  return data && withCategory(data);
 }

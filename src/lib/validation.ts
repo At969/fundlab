@@ -76,13 +76,8 @@ export const paymentSchema = z.object({
 export const productSchema = z.object({
   name: z.string().trim().min(2, { error: "Le nom doit contenir au moins 2 caractères." }).max(120),
   description: z.string().trim().max(500, { error: "500 caractères maximum." }),
-  // Une catégorie vide est enregistrée comme absente.
-  category: z
-    .string()
-    .trim()
-    .max(40, { error: "40 caractères maximum." })
-    .nullable()
-    .transform((value) => value || null),
+  // null : produit sans catégorie. L'existence de la catégorie est garantie par la clé étrangère.
+  category_id: z.uuid({ error: "Catégorie invalide." }).nullable(),
   price_cents: z.int({ error: "Prix invalide." }).min(0, { error: "Le prix ne peut pas être négatif." }).max(100_000_000),
   stock: z.int({ error: "Stock invalide." }).min(0, { error: "Le stock ne peut pas être négatif." }).max(1_000_000),
   is_active: z.boolean(),
@@ -93,6 +88,14 @@ export const productSchema = z.object({
 });
 
 export const productUpdateSchema = productSchema.partial();
+
+export const categorySchema = z.object({
+  name: z
+    .string({ error: "Indiquez un nom." })
+    .trim()
+    .min(2, { error: "Le nom doit contenir au moins 2 caractères." })
+    .max(40, { error: "40 caractères maximum." }),
+});
 
 export const orderStatusSchema = z.object({ status: z.enum(ORDER_STATUSES) });
 

@@ -6,7 +6,8 @@ import { IconButton } from "@/components/Icons";
 import { ProductThumb } from "@/components/ProductThumb";
 import { api, type ClientApiError } from "@/lib/client-api";
 import { formatPrice } from "@/lib/format";
-import { MAX_IMAGE_BYTES, MAX_PRODUCT_IMAGES, type AdminProduct } from "@/lib/types";
+import Link from "next/link";
+import { MAX_IMAGE_BYTES, MAX_PRODUCT_IMAGES, type AdminProduct, type Category } from "@/lib/types";
 
 type Editing = { mode: "create" } | { mode: "edit"; product: AdminProduct } | null;
 
@@ -16,7 +17,9 @@ type FormImage = { key: string; url: string; file?: File };
 const inputClass =
   "rounded-md border border-stone-300 bg-white px-3 py-2 text-base font-normal outline-none focus:border-accent-600 focus:ring-2 focus:ring-accent-500/25";
 
-export function ProductManager({ products }: { products: AdminProduct[] }) {
+type ManagerProps = { products: AdminProduct[]; categories: Category[] };
+
+export function ProductManager({ products, categories }: ManagerProps) {
   const router = useRouter();
   const [editing, setEditing] = useState<Editing>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -30,10 +33,6 @@ export function ProductManager({ products }: { products: AdminProduct[] }) {
     else router.refresh();
     setBusyId(null);
   }
-
-  const categories = [...new Set(products.flatMap((product) => (product.category ? [product.category] : [])))].sort(
-    (a, b) => a.localeCompare(b, "fr"),
-  );
 
   function remove(product: AdminProduct) {
     if (!window.confirm(`Supprimer définitivement « ${product.name} » ?`)) return;
@@ -163,7 +162,7 @@ function ProductForm({
   onSaved,
 }: {
   product: AdminProduct | null;
-  categories: string[];
+  categories: Category[];
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -250,7 +249,7 @@ function ProductForm({
     const body = {
       name: form.get("name"),
       description: form.get("description"),
-      category: form.get("category"),
+      category_id: form.get("category_id") || null,
       price_cents: Number(form.get("price_cents")),
       stock: Number(form.get("stock")),
       is_active: form.get("is_active") === "on",
@@ -345,22 +344,22 @@ function ProductForm({
           <span>
             Catégorie <span className="font-normal text-stone-500">(facultatif)</span>
           </span>
-          {/* Les catégories déjà utilisées sont proposées, pour éviter les doublons mal orthographiés. */}
-          <input
-            name="category"
-            list="product-categories"
-            maxLength={40}
-            autoComplete="off"
-            defaultValue={product?.category ?? ""}
-            placeholder="Choisir ou saisir une catégorie"
-            className={inputClass}
-          />
-          <datalist id="product-categories">
+          <select name="category_id" defaultValue={product?.category_id ?? ""} className={inputClass}>
+            <option value="">Sans catégorie</option>
             {categories.map((category) => (
-              <option key={category} value={category} />
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
             ))}
-          </datalist>
-          {fieldError("category")}
+          </select>
+          <span className="font-normal text-stone-500">
+            Les catégories se créent et se renomment dans{" "}
+            <Link href="/admin/categories" className="font-medium text-accent-700 hover:underline">
+              l&apos;onglet Catégories
+            </Link>
+            .
+          </span>
+          {fieldError("category_id")}
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium">
           Prix (F CFA)
