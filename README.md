@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FUNDLABSHOP
 
-## Getting Started
+Mini-application de gestion de commandes pour un petit commerce, réalisée pour le test technique FUND.lab Challenge.
 
-First, run the development server:
+- **Application en ligne** : <!-- TODO : lien Vercel -->
+- **Dépôt** : https://github.com/At969/fundlab
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Fonctionnalités
+
+**Boutique (visiteur et client)**
+
+- Catalogue de produits chargé depuis la base, avec image, prix et stock.
+- Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
+- Inscription, connexion et déconnexion.
+- Validation de commande, puis paiement simulé (aucune carte n'est débitée, rien n'est enregistré).
+- Historique des commandes avec leur statut.
+
+**Administration (compte administrateur)**
+
+- Tableau de bord : chiffre d'affaires encaissé, commandes à traiter, clients inscrits, stock faible.
+- Produits : création, modification, image, masquage, suppression.
+- Commandes : liste complète et changement de statut.
+- Utilisateurs : liste et changement de rôle.
+
+Les deux espaces sont étanches : un administrateur gère la plateforme et n'a ni panier ni commandes ; un client n'a pas accès à l'administration.
+
+## Stack
+
+| Besoin | Choix |
+|---|---|
+| Framework | Next.js 16 (App Router) et TypeScript : front-end et API dans un seul projet, déployé sur Vercel |
+| Base de données | Postgres hébergé par Supabase, interrogé uniquement depuis le serveur |
+| Images | Supabase Storage (bucket public `product-images`) |
+| Authentification | Faite maison : `bcryptjs` pour les mots de passe, JWT signé (`jose`) dans un cookie `httpOnly` |
+| Validation | Zod, sur toutes les entrées des routes API |
+| État du panier | Zustand, persisté dans le `localStorage` |
+| Styles | Tailwind CSS |
+
+## Architecture
+
+```
+src/
+├── app/
+│   ├── (auth)/            pages de connexion et d'inscription
+│   ├── admin/             espace d'administration
+│   ├── api/               routes API (auth, products, orders, admin/*)
+│   ├── cart/ checkout/ orders/   parcours client
+│   └── page.tsx           catalogue
+├── components/            composants d'interface (admin/ pour l'administration)
+├── lib/                   logique serveur : accès aux données, session, validation
+├── store/cart.ts          store Zustand du panier
+└── proxy.ts               redirection des visiteurs non connectés (ex-middleware)
+supabase/                  schéma SQL et jeu de données
+scripts/                   création d'un administrateur, création du bucket d'images
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Les pages sont rendues côté serveur et lisent la base directement via `src/lib`. Les composants interactifs (panier, formulaires, administration) passent par les routes API.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route | Méthodes | Accès |
+|---|---|---|
+| `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`, `/api/auth/me` | POST, POST, POST, GET | public |
+| `/api/products` | GET | public |
+| `/api/orders` | GET, POST | client |
+| `/api/orders/[id]` | GET | client (ses commandes uniquement) |
+| `/api/orders/[id]/pay` | POST | client |
+| `/api/admin/products`, `/api/admin/products/[id]` | GET, POST, PATCH, DELETE | administrateur |
+| `/api/admin/uploads` | POST | administrateur |
+| `/api/admin/orders`, `/api/admin/orders/[id]` | GET, PATCH | administrateur |
+| `/api/admin/users`, `/api/admin/users/[id]` | GET, PATCH | administrateur |
 
-## Learn More
+Toutes les erreurs ont le même format :
 
-To learn more about Next.js, take a look at the following resources:
+```json
+{ "error": { "code": "VALIDATION_ERROR", "message": "…", "fields": { "email": ["…"] } } }
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Sécurité
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Mots de passe** hachés avec bcrypt ; la connexion renvoie le même message et prend le même temps que l'e-mail existe ou non.
+- **Session** : JWT dans un cookie `httpOnly`, `Secure`, `SameSite=lax`. Le cookie identifie l'utilisateur ; son rôle est relu en base à chaque requête, donc un changement de rôle s'applique immédiatement.
+- **Autorisations** vérifiées dans chaque route API et chaque page, pas seulement dans `proxy.ts`. Le rôle ne peut pas être choisi à l'inscription.
+- **Commandes** : le navigateur n'envoie que des identifiants et des quantités. La fonction SQL `create_order` lit les prix en base, vérifie le stock et le décrémente dans une seule transaction.
+- **Cloisonnement** : un client ne peut lire ou payer que ses propres commandes (celle d'un autre renvoie 404).
+- **Images** : type vérifié sur le contenu du fichier (JPEG, PNG, WebP), 2 Mo maximum, nom généré par le serveur.
+- **Base** : RLS activé sans règle sur toutes les tables ; seule la clé `service_role`, présente uniquement côté serveur, y accède.
 
-## Deploy on Vercel
+## Installation locale
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Prérequis : Node.js 20.9 ou plus récent, et un projet [Supabase](https://supabase.com).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Installer les dépendances :
+
+   ```bash
+   npm install
+   ```
+
+2. Dans l'éditeur SQL de Supabase, exécuter `supabase/schema.sql`, puis `supabase/seed.sql` (douze produits de démonstration).
+
+3. Copier `.env.example` en `.env.local` et renseigner les trois variables :
+
+   | Variable | Rôle |
+   |---|---|
+   | `SUPABASE_URL` | URL du projet Supabase |
+   | `SUPABASE_SERVICE_ROLE_KEY` | clé `service_role` (ne jamais l'exposer côté navigateur) |
+   | `JWT_SECRET` | secret de signature des sessions, 32 caractères minimum |
+
+4. Créer le bucket des images, puis un compte administrateur :
+
+   ```bash
+   npm run setup-storage
+   npm run create-admin
+   ```
+
+5. Lancer l'application sur http://localhost:3000 :
+
+   ```bash
+   npm run dev
+   ```
+
+## Déploiement
+
+Le dépôt est relié à Vercel : chaque push sur `main` déclenche un déploiement. Les trois variables d'environnement ci-dessus doivent être définies dans le projet Vercel.
+
+## Limites connues
+
+- Le paiement est une simulation : aucun prestataire n'est appelé.
+- Annuler une commande ne remet pas les articles en stock.
+- L'administrateur peut passer une commande d'un statut à n'importe quel autre, sans ordre imposé.
+- Pas de tests automatisés ; les routes ont été vérifiées manuellement.
+- Les montants sont stockés en francs CFA entiers dans des colonnes nommées `*_cents` (plus petite unité de la devise).
