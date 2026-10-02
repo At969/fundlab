@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BackLink } from "@/components/BackLink";
 import { ProductCard } from "@/components/ProductCard";
 import { redirectAdminToDashboard } from "@/lib/guards";
 import { listActiveProducts } from "@/lib/products";
@@ -11,6 +12,7 @@ export default async function ProductsPage() {
 
   return (
     <div>
+      <BackLink href="/">Accueil</BackLink>
       <h1 className="text-2xl font-semibold tracking-tight">Tous les produits</h1>
 
       {products.length === 0 ? (

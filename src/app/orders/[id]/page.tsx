@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BackLink } from "@/components/BackLink";
 import { PayForm } from "@/components/PayForm";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatPrice, shortId } from "@/lib/format";
@@ -20,11 +20,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="max-w-2xl">
-      <Link href="/orders" className="text-sm text-stone-600 hover:text-stone-900">
-        ← Mes commandes
-      </Link>
+      <BackLink href="/orders">Mes commandes</BackLink>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">Commande n° {shortId(order.id)}</h1>
         <StatusBadge status={order.status} />
       </div>

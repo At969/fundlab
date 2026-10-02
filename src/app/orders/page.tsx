@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BackLink } from "@/components/BackLink";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatPrice, shortId } from "@/lib/format";
 import { requireCustomerPage } from "@/lib/guards";
@@ -13,6 +14,7 @@ export default async function OrdersPage() {
 
   return (
     <div>
+      <BackLink href="/products">Retour à la boutique</BackLink>
       <h1 className="text-2xl font-semibold tracking-tight">Mes commandes</h1>
 
       {orders.length === 0 ? (

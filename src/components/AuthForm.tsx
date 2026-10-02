@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { BackLink } from "@/components/BackLink";
 
 type Mode = "login" | "register";
 type FieldErrors = Record<string, string[] | undefined>;
@@ -69,6 +70,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
   return (
     <div className="mx-auto w-full max-w-sm">
+      <BackLink href="/">Retour à la boutique</BackLink>
       <h1 className="text-2xl font-semibold tracking-tight">{copy.title}</h1>
 
       <form onSubmit={onSubmit} noValidate className="mt-6 flex flex-col gap-4">
