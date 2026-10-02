@@ -10,7 +10,7 @@ Mini-application de gestion de commandes pour un petit commerce, réalisée pour
 **Boutique (visiteur et client)**
 
 - Page d'accueil présentant la boutique et une sélection de produits.
-- Catalogue de produits chargé depuis la base, avec image, prix et stock.
+- Catalogue de produits chargé depuis la base, avec image, prix et stock, et recherche instantanée.
 - Fiche détaillée par produit, avec galerie de photos.
 - Panier : ajout, changement de quantité, suppression, total recalculé à chaque modification. Il est conservé dans le navigateur et limité au stock disponible.
 - Inscription, connexion et déconnexion.
